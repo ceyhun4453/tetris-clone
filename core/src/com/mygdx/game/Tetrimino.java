@@ -1,6 +1,8 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.math.MathUtils;
+
+import java.util.Arrays;
 import java.util.Objects;
 
 // Class that represents each piece in a tetris game.
@@ -15,13 +17,11 @@ public class Tetrimino {
         return new Tetrimino(tetriminoType.arrangement, tetriminoType.constant, tetriminoType);
     }
 
-    public static Tetrimino getRandomTetromino() {
-        return makeFrom(Objects.requireNonNull(
-                TetriminoType.getTypeForConstant(MathUtils.random(TetriminoType.values().length - 1) + 1)));
-    }
-
     private Tetrimino(int[][] arrangement, int constant, TetriminoType type) {
-        this.arrangement = arrangement;
+        this.arrangement = new int[arrangement.length][arrangement[0].length];
+        for (int i = 0; i < arrangement.length; i++) {
+            this.arrangement[i] = Arrays.copyOf(arrangement[i], arrangement[i].length );
+        }
         this.constant = constant;
         this.type = type;
         rotationState = RotationState.SPAWN;
@@ -86,13 +86,13 @@ public class Tetrimino {
         }, 5),
         S(new int[][]{
                 {0, 0, 0},
-                {0, 6, 6},
-                {6, 6, 0}
+                {6, 6, 0},
+                {0, 6, 6}
         }, 6),
         Z(new int[][]{
                 {0, 0, 0},
-                {7, 7, 0},
-                {0, 7, 7}
+                {0, 7, 7},
+                {7, 7, 0}
         }, 7);
 
 

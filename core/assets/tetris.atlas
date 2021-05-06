@@ -1,54 +1,61 @@
 
 tetris.png
-size: 256, 64
+size: 256, 256
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
-IPiece
+ipiece
   rotate: false
-  xy: 104, 2
+  xy: 104, 142
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
-LPiece
+lpiece
   rotate: false
-  xy: 172, 2
+  xy: 172, 210
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
-OPiece
+opiece
   rotate: false
-  xy: 206, 2
+  xy: 104, 108
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
-JPiece
-  rotate: false
-  xy: 36, 2
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-SPiece
-  rotate: false
-  xy: 138, 2
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-TPiece
+background
   rotate: false
   xy: 2, 2
+  size: 100, 240
+  orig: 100, 240
+  offset: 0, 0
+  index: -1
+jpiece
+  rotate: false
+  xy: 104, 176
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
-ZPiece
+zpiece
   rotate: false
-  xy: 70, 2
+  xy: 138, 176
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+tpiece
+  rotate: false
+  xy: 104, 210
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+spiece
+  rotate: false
+  xy: 138, 210
   size: 32, 32
   orig: 32, 32
   offset: 0, 0

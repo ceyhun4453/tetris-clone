@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -53,23 +54,30 @@ public class Rotater {
     }
 
     Rotation rotation = new Rotation(true);
-    public Tetrimino rotatePiece(Playfield field, int direction) {
-        Tetrimino piece = field.getActivePiece();
-        RotationState lastState = piece.getRotationState();
-        rotate(piece, direction);
-        RotationState nextState = RotationState.getClockwiseRotationState(lastState);
-        rotation.setStartState(lastState);
-        rotation.setEndState(nextState);
-        boolean isRotationPossible = false;
-        for (Vector2 v : wallKickData.getWallKickDataFor(rotation, piece)) {
-            if (field.moveActivePiece(Math.round(v.x), Math.round(v.y))) {
-                isRotationPossible = true;
-                break;
-            }
-        }
 
-        if (!isRotationPossible) {
-            rotate(piece, -direction);
+    public Tetrimino rotatePiece(Playfield field, Mover mover, int direction) {
+        Tetrimino piece = field.getActivePiece();
+        if (piece != null) {
+            field.unmergeActivePiece();
+            RotationState lastState = piece.getRotationState();
+            rotate(piece, direction);
+            RotationState nextState = piece.getRotationState();
+            rotation.setStartState(lastState);
+            rotation.setEndState(nextState);
+            boolean isRotationPossible = false;
+            for (Vector2 v : wallKickData.getWallKickDataFor(rotation, piece)) {
+                int resultantRow = field.getActivePieceRow() + Math.round(v.y);
+                int resultantCol = field.getActivePieceCol() + Math.round(v.x);
+                if (field.isSpaceAvaiable(resultantRow, resultantCol, piece)) {
+                    mover.movePiece(field, Math.round(v.x), Math.round(v.y));
+                    isRotationPossible = true;
+                    break;
+                }
+            }
+            if (!isRotationPossible) {
+                rotate(piece, -direction);
+            }
+            field.mergeActivePiece();
         }
         return piece;
     }

@@ -32,6 +32,7 @@ public class Assets implements Disposable {
     }
 
     public static class SpriteAssets {
+        public final TextureRegion background;
         public final TextureRegion lPiece;
         public final TextureRegion jPiece;
         public final TextureRegion iPiece;
@@ -41,13 +42,14 @@ public class Assets implements Disposable {
         public final TextureRegion sPiece;
 
         private SpriteAssets(TextureAtlas atlas) {
-            lPiece = atlas.findRegion("LPiece");
-            jPiece = atlas.findRegion("JPiece");
-            iPiece = atlas.findRegion("IPiece");
-            oPiece = atlas.findRegion("OPiece");
-            tPiece = atlas.findRegion("TPiece");
-            zPiece = atlas.findRegion("ZPiece");
-            sPiece = atlas.findRegion("SPiece");
+            lPiece = atlas.findRegion("lpiece");
+            jPiece = atlas.findRegion("jpiece");
+            iPiece = atlas.findRegion("ipiece");
+            oPiece = atlas.findRegion("opiece");
+            tPiece = atlas.findRegion("tpiece");
+            zPiece = atlas.findRegion("zpiece");
+            sPiece = atlas.findRegion("spiece");
+            background = atlas.findRegion("background");
         }
     }
 }
