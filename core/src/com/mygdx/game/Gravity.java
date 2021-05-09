@@ -1,7 +1,5 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.Gdx;
-
 public class Gravity {
 
     private final float fallTime = 0.75f;
@@ -10,24 +8,26 @@ public class Gravity {
     private float lockTimer = 0.0f;
     private float fallCounter = 0.0f;
     private float fallModifier = 1.0f;
-    private GravityState currentState;
-    private final SoftDropState softDropState;
-    private final RegularGravityState regularGravityState;
-    private final HardDropState hardDropState;
+    private GravityHandler currentState;
+    private final SoftDropHandler softDropState;
+    private final RegularGravityHandler regularGravityState;
+    private final HardDropHandler hardDropState;
+    private final GravityEvent gravityEvent;
 
     public Gravity() {
-        regularGravityState = new RegularGravityState();
-        softDropState = new SoftDropState();
-        hardDropState = new HardDropState();
+        regularGravityState = new RegularGravityHandler();
+        softDropState = new SoftDropHandler();
+        hardDropState = new HardDropHandler();
         currentState = regularGravityState;
+        gravityEvent = new GravityEvent(false, 0, GravityState.RegularGravity);
     }
 
-    public boolean gravitate(Playfield playfield, Mover mover, float deltaT) {
+    public boolean gravitate(Playfield playfield, Mover mover, float deltaT, int level) {
         if (isLockingDown(playfield)) {
             return handleLock(playfield, deltaT);
         }
         lockTimer = 0;
-        currentState.gravitate(playfield, mover, this, deltaT);
+        currentState.gravitate(playfield, mover, this, deltaT, level);
         if (currentState.equals(hardDropState)) {
             currentState = regularGravityState;
             lockTimer = lockTime;
@@ -72,51 +72,116 @@ public class Gravity {
         currentState = regularGravityState;
     }
 
+    public boolean isInSoftDrop() {
+        return currentState.equals(softDropState);
+    }
+
     public void hardDrop() {
         currentState = hardDropState;
     }
 
-    interface GravityState {
-        boolean gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT);
+    interface GravityHandler {
+        boolean gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT, int level);
     }
 
-    private static class RegularGravityState implements GravityState {
+    public enum GravityState implements GravityHandler {
+        RegularGravity {
+            @Override
+            public boolean gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT, int level) {
+                gravity.fallCounter += deltaT * gravity.fallModifier * (1 + (level - 1) * 0.1);
+                while (gravity.fallCounter > gravity.fallTime) {
+                    if (playfield.getActivePiece() == null) {
+                        return false;
+                    }
+                    if (mover.movePiece(playfield, 0, -1)) {
+                        gravity.gravityEvent.numberOfCellsMoved = 1;
+                    }
+                    gravity.fallCounter -= gravity.fallTime;
+                }
+                return true;
+            }
+        },
+
+        SoftDrop {
+            private final int softDropModifier = 20;
+
+            @Override
+            public boolean gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT, int level) {
+                return RegularGravity.gravitate(playfield, mover, gravity, deltaT, level);
+            }
+        },
+
+        HardDrop {
+            @Override
+            public boolean gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT, int level) {
+                while (mover.movePiece(playfield, 0, -1)) ;
+                gravity.fallCounter = 0;
+                return true;
+            }
+        };
+    }
+
+
+    private static class RegularGravityHandler implements GravityHandler {
 
         @Override
-        public boolean gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT) {
-            gravity.fallCounter += deltaT * gravity.fallModifier;
+        public boolean gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT, int level) {
+            gravity.fallCounter += deltaT * gravity.fallModifier * (1 + (level - 1) * 0.1);
             while (gravity.fallCounter > gravity.fallTime) {
                 if (playfield.getActivePiece() == null) {
                     return false;
                 }
-                mover.movePiece(playfield, 0, -1);
+                if (mover.movePiece(playfield, 0, -1)) {
+                    gravity.gravityEvent.numberOfCellsMoved = 1;
+                }
                 gravity.fallCounter -= gravity.fallTime;
             }
             return true;
         }
     }
 
-    private static class SoftDropState implements GravityState {
+    private static class SoftDropHandler implements GravityHandler {
         private final int softDropModifier = 20;
-        private final RegularGravityState regularGravityState;
+        private final RegularGravityHandler regularGravityState;
 
-        public SoftDropState() {
-            regularGravityState = new RegularGravityState();
+        public SoftDropHandler() {
+            regularGravityState = new RegularGravityHandler();
         }
 
         @Override
-        public boolean gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT) {
-            return regularGravityState.gravitate(playfield, mover, gravity, deltaT * softDropModifier);
+        public boolean gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT, int level) {
+            return regularGravityState.gravitate(playfield, mover, gravity, deltaT * softDropModifier, level);
         }
     }
 
-    private static class HardDropState implements GravityState {
+    private static class HardDropHandler implements GravityHandler {
 
         @Override
-        public boolean gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT) {
-            while (mover.movePiece(playfield, 0, -1));
+        public boolean gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT, int level) {
+            while (mover.movePiece(playfield, 0, -1)) ;
             gravity.fallCounter = 0;
             return true;
+        }
+    }
+
+
+    private static class GravityEvent {
+        private boolean isPieceLocked;
+        private int numberOfCellsMoved;
+        private GravityState state;
+
+        public GravityEvent(boolean isPieceLocked, int numberOfCellsMoved, GravityState state) {
+            this.isPieceLocked = isPieceLocked;
+            this.numberOfCellsMoved = numberOfCellsMoved;
+            this.state = state;
+        }
+
+        public boolean isPieceLocked() {
+            return isPieceLocked;
+        }
+
+        public int getNumberOfCellsMoved() {
+            return numberOfCellsMoved;
         }
     }
 }

@@ -20,7 +20,7 @@ public class TetrisManager implements InputProcessor {
     private final TetrisRenderer renderer;
 
     private int newPieceVerticalPosition = 21;
-    private int currentLevel = 1;
+    private int currentLevel = 10;
     private int clearedRows = 0;
 
     public TetrisManager(SpriteBatch batch, Assets assets) {
@@ -39,7 +39,7 @@ public class TetrisManager implements InputProcessor {
             addNewPiece(generator.getRandomTetrimino());
         }
 
-        if(!gravity.gravitate(field, mover, deltaT)) {
+        if(!gravity.gravitate(field, mover, deltaT, currentLevel)) {
             int lastClearedRows = clearer.clearFullRows(field).size;
             clearedRows += lastClearedRows;
             Gdx.app.log("CLEARED ROWS: ", String.valueOf(clearedRows));
@@ -70,6 +70,7 @@ public class TetrisManager implements InputProcessor {
         field.mergeActivePiece();
         Gdx.app.log("NEW PIECE", "New Piece: " + newPiece.getTetrominoType());
     }
+
     @Override
     public boolean keyDown(int keycode) {
         switch (keycode) {
