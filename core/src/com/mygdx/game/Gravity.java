@@ -16,17 +16,18 @@ public class Gravity {
         gravityEvent = new GravityEvent(false, 0, GravityState.RegularGravity);
     }
 
-    public boolean gravitate(Playfield playfield, Mover mover, float deltaT, int level) {
+    public GravityEvent gravitate(Playfield playfield, Mover mover, float deltaT, int level) {
         if (isLockingDown(playfield)) {
             return handleLock(playfield, deltaT);
         }
+        gravityEvent.reset();
         lockTimer = 0;
         currentState.gravitate(playfield, mover, this, deltaT, level);
         if (currentState.equals(GravityState.HardDrop)) {
             currentState = GravityState.RegularGravity;
             lockTimer = lockTime;
         }
-        return true;
+        return gravityEvent;
     }
 
     private void progressLockdown(float deltaT) {
@@ -44,13 +45,15 @@ public class Gravity {
     }
 
     //Returns true if the piece should be locked in place. Returns false if there is still some time left.
-    private boolean handleLock(Playfield playfield, float deltaT) {
+    private GravityEvent handleLock(Playfield playfield, float deltaT) {
         if (lockTimer > lockTime) {
             lockTimer = 0;
-            return false;
+            gravityEvent.isPieceInPlay = false;
+            return gravityEvent;
         }
         progressLockdown(deltaT);
-        return true;
+        gravityEvent.isPieceInPlay = true;
+        return gravityEvent;
 
     }
 
@@ -79,16 +82,19 @@ public class Gravity {
             @Override
             public GravityEvent gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT, int level) {
                 gravity.fallCounter += deltaT * gravity.fallModifier * (1 + (level - 1) * 0.1);
+                gravity.gravityEvent.reset();
                 while (gravity.fallCounter > gravity.fallTime) {
                     if (playfield.getActivePiece() == null) {
                         gravity.gravityEvent.setFields(false, 0, RegularGravity);
                     }
                     if (mover.movePiece(playfield, 0, -1)) {
-                        gravity.gravityEvent.numberOfCellsMoved = 1;
+                        gravity.gravityEvent.numberOfCellsMoved += 1;
                     }
                     gravity.fallCounter -= gravity.fallTime;
                 }
-                return true;
+                gravity.gravityEvent.state = RegularGravity;
+                gravity.gravityEvent.isPieceInPlay = true;
+                return gravity.gravityEvent;
             }
         },
 
@@ -97,27 +103,33 @@ public class Gravity {
 
             @Override
             public GravityEvent gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT, int level) {
-                return RegularGravity.gravitate(playfield, mover, gravity, softDropModifier * deltaT, level);
+                RegularGravity.gravitate(playfield, mover, gravity, softDropModifier * deltaT, level);
+                gravity.gravityEvent.state = SoftDrop;
+                return gravity.gravityEvent;
             }
         },
 
         HardDrop {
             @Override
             public GravityEvent gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT, int level) {
-                while (mover.movePiece(playfield, 0, -1)) ;
-                gravity.fallCounter = 0;
-                return true;
+                gravity.gravityEvent.reset();
+                int fallCounter = 0;
+                while (mover.movePiece(playfield, 0, -1)) {
+                    fallCounter++;
+                }
+                gravity.gravityEvent.setFields(true, fallCounter, HardDrop);
+                return gravity.gravityEvent;
             }
         };
     }
 
     // TODO: rename this class.
-    private static class GravityEvent {
+    public static class GravityEvent {
         private boolean isPieceInPlay;
         private int numberOfCellsMoved;
         private GravityState state;
 
-        public GravityEvent(boolean isPieceInPlay, int numberOfCellsMoved, GravityState state) {
+        private GravityEvent(boolean isPieceInPlay, int numberOfCellsMoved, GravityState state) {
             this.isPieceInPlay = isPieceInPlay;
             this.numberOfCellsMoved = numberOfCellsMoved;
             this.state = state;
@@ -127,6 +139,12 @@ public class Gravity {
             this.isPieceInPlay = isPieceInPlay;
             this.numberOfCellsMoved = numberOfCellsMoved;
             this.state = state;
+        }
+
+        private void reset() {
+            state = GravityState.RegularGravity;
+            numberOfCellsMoved = 0;
+            isPieceInPlay = false;
         }
 
         public boolean isPieceInPlay() {
