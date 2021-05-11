@@ -19,9 +19,6 @@ public class Scorer {
             modifier = 2;
         }
         score += modifier * gravityEvent.getNumberOfCellsMoved();
-        if (modifier != 0) {
-            Gdx.app.log("SCORE", "Score: " + String.valueOf(score));
-        }
     }
 
     public void updateScoreWithClear(int numberOfClearedRows, int level) {
