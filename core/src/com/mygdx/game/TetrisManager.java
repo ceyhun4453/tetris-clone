@@ -39,11 +39,13 @@ public class TetrisManager implements InputProcessor {
             addNewPiece(generator.getRandomTetrimino());
         }
 
-        if(!gravity.gravitate(field, mover, deltaT, currentLevel).isPieceInPlay()) {
+        Gravity.GravityEvent gravityEvent = gravity.gravitate(field, mover, deltaT);
+        scorer.updateScoreWithGravity(gravityEvent);
+        if(!gravityEvent.isPieceInPlay()) {
             int lastClearedRows = clearer.clearFullRows(field).size;
             clearedRows += lastClearedRows;
             Gdx.app.log("CLEARED ROWS: ", String.valueOf(clearedRows));
-            scorer.updateScore(lastClearedRows, currentLevel);
+            scorer.updateScoreWithClear(lastClearedRows, currentLevel);
             if (clearedRows >= clearsPerLevel) {
                 currentLevel++;
                 gravity.stepUpFallSpeed();

@@ -11,7 +11,20 @@ public class Scorer {
 
     }
 
-    public void updateScore(int numberOfClearedRows, int level) {
+    public void updateScoreWithGravity(Gravity.GravityEvent gravityEvent) {
+        int modifier = 0;
+        if (gravityEvent.getGravityState() == Gravity.GravityState.SoftDrop) {
+            modifier = 1;
+        } else if (gravityEvent.getGravityState() == Gravity.GravityState.HardDrop) {
+            modifier = 2;
+        }
+        score += modifier * gravityEvent.getNumberOfCellsMoved();
+        if (modifier != 0) {
+            Gdx.app.log("SCORE", "Score: " + String.valueOf(score));
+        }
+    }
+
+    public void updateScoreWithClear(int numberOfClearedRows, int level) {
         switch (numberOfClearedRows) {
             case 0:
                 lastClearSize = 0;
@@ -37,6 +50,5 @@ public class Scorer {
                 lastClearSize = 4;
                 break;
         }
-        Gdx.app.log("Score: ", String.valueOf(score));
     }
 }
