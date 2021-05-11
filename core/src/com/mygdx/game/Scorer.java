@@ -3,6 +3,8 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 
 public class Scorer {
+    private static final int SOFTDROP_SCORE_MODIFIER = 1;
+    private static final int HARDDROP_SCORE_MODIFIER = 2;
 
     private int lastClearSize = 0;
     private int score = 0;
@@ -12,13 +14,11 @@ public class Scorer {
     }
 
     public void updateScoreWithGravity(Gravity.GravityEvent gravityEvent) {
-        int modifier = 0;
         if (gravityEvent.getGravityState() == Gravity.GravityState.SoftDrop) {
-            modifier = 1;
+            score += SOFTDROP_SCORE_MODIFIER * gravityEvent.getNumberOfCellsMoved();
         } else if (gravityEvent.getGravityState() == Gravity.GravityState.HardDrop) {
-            modifier = 2;
+            score += HARDDROP_SCORE_MODIFIER * gravityEvent.getNumberOfCellsMoved();
         }
-        score += modifier * gravityEvent.getNumberOfCellsMoved();
     }
 
     public void updateScoreWithClear(int numberOfClearedRows, int level) {
@@ -47,5 +47,9 @@ public class Scorer {
                 lastClearSize = 4;
                 break;
         }
+    }
+
+    public int getScore() {
+        return score;
     }
 }
