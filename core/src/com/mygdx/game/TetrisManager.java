@@ -70,7 +70,6 @@ public class TetrisManager implements InputProcessor {
         field.setActivePieceCol(newPieceHorizontalPosition);
         field.setActivePiece(newPiece);
         field.mergeActivePiece();
-        Gdx.app.log("NEW PIECE", "New Piece: " + newPiece.getTetrominoType());
     }
 
     @Override

@@ -33,7 +33,7 @@ public class Rotater {
     // Clockwise rotation for positive values of "direction",
     // anticlockwise rotation for negative values of "direction"
     // If "direction" is equal to zero, returns the piece without rotating it.
-    public Tetrimino rotate(Tetrimino piece, int direction) {
+    private void rotate(Tetrimino piece, int direction) {
         resetTempArrangment();
         if (direction > 0) {
             setUpTransformationClockwise(piece);
@@ -41,22 +41,22 @@ public class Rotater {
         } else if (direction < 0) {
             setUpTransformationAntiClockwise(piece);
             piece.setRotationState(RotationState.getAntiClockwiseRotationState(piece.getRotationState()));
-        } else {
-            return piece;
         }
+
         for (int r = 0; r < piece.getLength(); r++) {
             for (int c = 0; c < piece.getLength(); c++) {
                 calculateRotatedPointAndWriteToArray(r, c, indexVector, tempArrangement, piece);
             }
         }
         copyTempArrangementToPiece(tempArrangement, piece);
-        return piece;
     }
 
-    Rotation rotation = new Rotation(true);
+    private final Rotation rotation = new Rotation(true);
+    private final MutableMovementResult result = new MutableMovementResult(MovementResult.MovementType.RotationalMovement, false);
 
-    public Tetrimino rotatePiece(Playfield field, Mover mover, int direction) {
+    public MovementResult rotatePiece(Playfield field, Mover mover, int direction) {
         Tetrimino piece = field.getActivePiece();
+        boolean isRotationPossible = false;
         if (piece != null) {
             field.unmergeActivePiece();
             RotationState lastState = piece.getRotationState();
@@ -64,7 +64,6 @@ public class Rotater {
             RotationState nextState = piece.getRotationState();
             rotation.setStartState(lastState);
             rotation.setEndState(nextState);
-            boolean isRotationPossible = false;
             for (Vector2 v : wallKickData.getWallKickDataFor(rotation, piece)) {
                 int resultantRow = field.getActivePieceRow() + Math.round(v.y);
                 int resultantCol = field.getActivePieceCol() + Math.round(v.x);
@@ -79,7 +78,9 @@ public class Rotater {
             }
             field.mergeActivePiece();
         }
-        return piece;
+        result.setSuccess(isRotationPossible);
+        Gdx.app.log("ROTATION", "Success: " + result.isSuccessful());
+        return result;
     }
 
     private void calculateRotatedPointAndWriteToArray(int row, int col, Vector3 indexVector,
