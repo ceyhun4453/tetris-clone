@@ -1,10 +1,14 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
+
 public class Mover {
     public Mover() {
     }
 
-    public boolean movePiece(Playfield field, int x, int y) {
+    private final MutableMovementResult result = new MutableMovementResult(MovementResult.MovementType.LinearMovement, false);
+
+    public MovementResult movePiece(Playfield field, int x, int y) {
         boolean isMoved = false;
         int pieceRow = field.getActivePieceRow();
         int pieceCol = field.getActivePieceCol();
@@ -18,6 +22,7 @@ public class Mover {
             }
             field.mergeActivePiece();
         }
-        return isMoved;
+        result.setSuccess(isMoved);
+        return result;
     }
 }

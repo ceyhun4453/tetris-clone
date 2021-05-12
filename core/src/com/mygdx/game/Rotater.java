@@ -79,7 +79,6 @@ public class Rotater {
             field.mergeActivePiece();
         }
         result.setSuccess(isRotationPossible);
-        Gdx.app.log("ROTATION", "Success: " + result.isSuccessful());
         return result;
     }
 

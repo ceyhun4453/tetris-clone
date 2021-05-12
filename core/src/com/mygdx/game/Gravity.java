@@ -89,7 +89,7 @@ public class Gravity {
                     if (playfield.getActivePiece() == null) {
                         gravity.gravityEvent.setFields(false, 0, RegularGravity);
                     }
-                    if (mover.movePiece(playfield, 0, -1)) {
+                    if (mover.movePiece(playfield, 0, -1).isSuccessful()) {
                         gravity.gravityEvent.numberOfCellsMoved += 1;
                     }
                     gravity.fallCounter -= gravity.fallTime;
@@ -115,7 +115,7 @@ public class Gravity {
             @Override
             public GravityEvent gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT) {
                 int fallCounter = 0;
-                while (mover.movePiece(playfield, 0, -1)) {
+                while (mover.movePiece(playfield, 0, -1).isSuccessful()) {
                     fallCounter++;
                 }
                 gravity.gravityEvent.setFields(true, fallCounter, HardDrop);
