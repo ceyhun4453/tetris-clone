@@ -23,7 +23,6 @@ public class Gravity {
             return handleLock(playfield, deltaT);
         }
         gravityEvent.reset();
-        lockTimer = 0;
         currentState.gravitate(playfield, mover, this, deltaT);
         if (currentState.equals(GravityState.HardDrop)) {
             currentState = GravityState.RegularGravity;
