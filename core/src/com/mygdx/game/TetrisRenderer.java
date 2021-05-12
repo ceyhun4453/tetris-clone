@@ -9,6 +9,8 @@ import com.badlogic.gdx.utils.ObjectMap;
 
 public class TetrisRenderer {
     private static final int unitLength = 10;
+    private static final int visibleColumns = 10;
+    private static final int visibleRows = 20;
     private final OrthographicCamera camera;
     private final Assets assets;
     private final SpriteBatch batch;
@@ -18,7 +20,7 @@ public class TetrisRenderer {
         this.playfield = playfield;
         this.batch = batch;
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, unitLength * playfield.getPlayAreaWidth(), unitLength * playfield.getPlayAreaHeight());
+        camera.setToOrtho(false, unitLength * visibleColumns, unitLength * visibleRows);
         batch.setProjectionMatrix(camera.combined);
         this.assets = assets;
     }

@@ -5,9 +5,9 @@ import java.util.Arrays;
 public class Playfield {
     private static final int WALL_VALUE = 9;
     private final int playFieldWidth = 16;
-    private final int playFieldHeight = 32;
+    private final int playFieldHeight = 48;
     private final int playAreaStartRow = 3;
-    private final int playAreaEndRow = 26;
+    private final int playAreaEndRow = 42;
     private final int playAreaStartCol = 3;
     private final int playAreaEndCol = 12;
     private final int[][] field;
