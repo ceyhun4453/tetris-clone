@@ -43,4 +43,41 @@ public class Clearer {
             field.setValue(0, row, col);
         }
     }
+
+    public enum ClearType {
+        Regular, TSpin;
+    }
+
+    public static class Clear {
+        private ClearType clearType;
+        private int numberOfLines;
+        private int streak;
+
+        private Clear() {
+        }
+
+        private void setClearType(ClearType clearType) {
+            this.clearType = clearType;
+        }
+
+        private void setNumberOfLines(int numberOfLines) {
+            this.numberOfLines = numberOfLines;
+        }
+
+        private void setStreak(int streak) {
+            this.streak = streak;
+        }
+
+        public ClearType getClearType() {
+            return clearType;
+        }
+
+        public int getNumberOfLines() {
+            return numberOfLines;
+        }
+
+        public int getStreak() {
+            return streak;
+        }
+    }
 }
