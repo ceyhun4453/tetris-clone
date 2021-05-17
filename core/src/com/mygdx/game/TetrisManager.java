@@ -11,8 +11,7 @@ public class TetrisManager implements InputProcessor {
     private final int newPieceHorizontalPosition = 4;
 
     private final Playfield field;
-    private final Mover mover;
-    private final Rotater rotater;
+    private final MovementHandler movementHandler;
     private final Clearer clearer;
     private final Gravity gravity;
     private final Scorer scorer;
@@ -25,8 +24,9 @@ public class TetrisManager implements InputProcessor {
 
     public TetrisManager(SpriteBatch batch, Assets assets) {
         field = new Playfield();
-        mover = new Mover();
-        rotater = new Rotater();
+        SimpleTranslater translater = new SimpleTranslater();
+        SimpleRotater rotater = new SimpleRotater(translater);
+        movementHandler = new MovementHandler(translater, rotater);
         clearer = new Clearer();
         scorer = new Scorer();
         renderer = new TetrisRenderer(field, batch, assets);
@@ -39,7 +39,7 @@ public class TetrisManager implements InputProcessor {
             addNewPiece(generator.getRandomTetrimino());
         }
 
-        Gravity.GravityEvent gravityEvent = gravity.gravitate(field, mover, deltaT);
+        Gravity.GravityEvent gravityEvent = gravity.gravitate(field, movementHandler, deltaT);
         scorer.updateScoreWithGravity(gravityEvent);
         if(!gravityEvent.isPieceInPlay()) {
             int lastClearedRows = clearer.clearFullRows(field).size;
@@ -76,16 +76,16 @@ public class TetrisManager implements InputProcessor {
     public boolean keyDown(int keycode) {
         switch (keycode) {
             case Input.Keys.LEFT:
-                mover.movePiece(field, -1, 0);
+                movementHandler.movePiece(field, -1, 0);
                 return true;
             case Input.Keys.RIGHT:
-                mover.movePiece(field, 1, 0);
+                movementHandler.movePiece(field, 1, 0);
                 return true;
             case Input.Keys.X:
-                rotater.rotatePiece(field, mover , Rotater.CLOCKWISE);
+                movementHandler.rotatePiece(field, SimpleRotater.CLOCKWISE);
                 return true;
             case Input.Keys.Z:
-                rotater.rotatePiece(field, mover, Rotater.ANTICLOCKWISE);
+                movementHandler.rotatePiece(field, SimpleRotater.ANTICLOCKWISE);
                 return true;
             case Input.Keys.DOWN:
                 gravity.startSoftDrop();

@@ -1,13 +1,12 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.Gdx;
-
-public class Mover {
-    public Mover() {
+public class SimpleTranslater implements Translater {
+    public SimpleTranslater() {
     }
 
     private final MutableMovementResult result = new MutableMovementResult(MovementResult.MovementType.LinearMovement, false);
 
+    @Override
     public MovementResult movePiece(Playfield field, int x, int y) {
         boolean isMoved = false;
         int pieceRow = field.getActivePieceRow();

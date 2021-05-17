@@ -1,7 +1,5 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.Gdx;
-
 public class Gravity {
 
     private final float fallTime = 0.75f;
@@ -18,7 +16,7 @@ public class Gravity {
         gravityEvent = new GravityEvent(false, 0, GravityState.RegularGravity);
     }
 
-    public GravityEvent gravitate(Playfield playfield, Mover mover, float deltaT) {
+    public GravityEvent gravitate(Playfield playfield, Translater mover, float deltaT) {
         if (isLockingDown(playfield)) {
             return handleLock(playfield, deltaT);
         }
@@ -77,13 +75,13 @@ public class Gravity {
     }
 
     interface GravityHandler {
-        GravityEvent gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT);
+        GravityEvent gravitate(Playfield playfield, Translater mover, Gravity gravity, float deltaT);
     }
 
     public enum GravityState implements GravityHandler {
         RegularGravity {
             @Override
-            public GravityEvent gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT) {
+            public GravityEvent gravitate(Playfield playfield, Translater mover, Gravity gravity, float deltaT) {
                 gravity.fallCounter += deltaT * gravity.fallModifier;
                 while (gravity.fallCounter > gravity.fallTime) {
                     if (playfield.getActivePiece() == null) {
@@ -104,7 +102,7 @@ public class Gravity {
             private final int softDropModifier = 20;
 
             @Override
-            public GravityEvent gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT) {
+            public GravityEvent gravitate(Playfield playfield, Translater mover, Gravity gravity, float deltaT) {
                 RegularGravity.gravitate(playfield, mover, gravity, softDropModifier * deltaT);
                 gravity.gravityEvent.state = SoftDrop;
                 return gravity.gravityEvent;
@@ -113,7 +111,7 @@ public class Gravity {
 
         HardDrop {
             @Override
-            public GravityEvent gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT) {
+            public GravityEvent gravitate(Playfield playfield, Translater mover, Gravity gravity, float deltaT) {
                 int fallCounter = 0;
                 while (mover.movePiece(playfield, 0, -1).isSuccessful()) {
                     fallCounter++;
