@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -52,7 +53,7 @@ public class SimpleRotater implements Rotater {
         copyTempArrangementToPiece(tempArrangement, piece);
     }
 
-    private final Rotation rotation = new Rotation(true);
+    private final Rotation rotation = new Rotation();
     private final MutableMovementResult result = new MutableMovementResult(MovementResult.MovementType.RotationalMovement, false);
 
     @Override

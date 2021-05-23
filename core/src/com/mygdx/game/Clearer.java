@@ -4,21 +4,22 @@ import com.badlogic.gdx.utils.IntArray;
 
 public class Clearer {
 
-    private final IntArray clearedRows = new IntArray(4);
+    private final Clear clear = new Clear();
 
     // Returns a list of cleared rows.
-    public IntArray clearFullRows(Playfield field) {
-        clearedRows.clear();
+    public Clear clearFullRows(Playfield field) {
+        clear.numberOfLines = 0;
         for (int r = field.getPlayAreaHeight() - 1; r >= 0; r--) {
             if(isRowFull(field, r)) {
                 clearRow(field, r);
                 moveAllRowsAboveDown(field, r);
-                clearedRows.add(r);
+                clear.numberOfLines += 1;
             }
         }
 
-        return clearedRows;
+        return clear;
     }
+    
     private void moveAllRowsAboveDown(Playfield field, int row) {
         for (int r = row + 1; r < field.getPlayAreaHeight(); r++) {
             for (int c = 0; c < field.getPlayAreaWidth(); c++) {
@@ -45,7 +46,7 @@ public class Clearer {
     }
 
     public enum ClearType {
-        Regular, TSpin;
+        Regular, MiniTSpin, TSpin;
     }
 
     public static class Clear {

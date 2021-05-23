@@ -24,9 +24,7 @@ public class TetrisManager implements InputProcessor {
 
     public TetrisManager(SpriteBatch batch, Assets assets) {
         field = new Playfield();
-        SimpleTranslater translater = new SimpleTranslater();
-        SimpleRotater rotater = new SimpleRotater(translater);
-        movementHandler = new MovementHandler(translater, rotater);
+        movementHandler = new MovementHandler();
         clearer = new Clearer();
         scorer = new Scorer();
         renderer = new TetrisRenderer(field, batch, assets);
@@ -42,7 +40,7 @@ public class TetrisManager implements InputProcessor {
         Gravity.GravityEvent gravityEvent = gravity.gravitate(field, movementHandler, deltaT);
         scorer.updateScoreWithGravity(gravityEvent);
         if(!gravityEvent.isPieceInPlay()) {
-            int lastClearedRows = clearer.clearFullRows(field).size;
+            int lastClearedRows = clearer.clearFullRows(field).getNumberOfLines();
             clearedRows += lastClearedRows;
             Gdx.app.log("CLEARED ROWS: ", String.valueOf(clearedRows));
             scorer.updateScoreWithClear(lastClearedRows, currentLevel);

@@ -1,0 +1,8 @@
+1-) Subclasses for MovementResult that are specifically for Rotation and Translation. These classes also 
+must include more details bout the movement (x and y for translation, start and end rotationstate for rotations) 
+2-) Use pools for commonly used objects: Vectors, MovementResults, GravityEvents...
+3-) TSpins: ...
+4-) GhostPiece:
+5-) Saving a piece.
+6-) Saving scores.
+ 

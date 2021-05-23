@@ -24,7 +24,7 @@ public class MutableMovementResult implements MovementResult{
     }
 
     @Override
-    public MovementType getMovementType() {
+    public MovementType movementType() {
         return movementType;
     }
 }

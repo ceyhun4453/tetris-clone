@@ -6,29 +6,23 @@ public class Rotation {
 
     private RotationState startState;
     private RotationState endState;
-    private boolean isChangeable;
-    public Rotation(boolean isChangable) {
-        this.isChangeable = isChangable;
+
+    public Rotation() {
     }
 
-    public Rotation(RotationState startState, RotationState endState, boolean isChangeable) {
-        this(isChangeable);
+    public Rotation(RotationState startState, RotationState endState) {
         this.startState = startState;
         this.endState = endState;
     }
 
     // Sets the startState of this Rotation ONLY IF isChangeable is true.
     public void setStartState(RotationState startState) {
-        if (isChangeable) {
             this.startState = startState;
-        }
     }
 
     // Sets the endState of this Rotation ONLY IF isChangeable is true.
     public void setEndState(RotationState endState) {
-        if (isChangeable) {
             this.endState = endState;
-        }
     }
 
     @Override
