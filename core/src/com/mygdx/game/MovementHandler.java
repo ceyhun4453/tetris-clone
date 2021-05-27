@@ -6,7 +6,6 @@ public class MovementHandler implements Translater, Rotater {
 
     private Translater translater;
     private Rotater rotater;
-    private Movement movement;
 
     public MovementHandler() {
         this.translater = new SimpleTranslater();
@@ -27,28 +26,5 @@ public class MovementHandler implements Translater, Rotater {
         if (r.isSuccessful()) {
         }
         return r;
-    }
-
-    public static class Movement {
-        private RotationState currentRotationState;
-        private RotationState previousRotationState;
-        private Vector2 currentPosition;
-        private Vector2 previousPosition;
-
-        public RotationState getCurrentRotationState() {
-            return currentRotationState;
-        }
-
-        public RotationState getPreviousRotationState() {
-            return previousRotationState;
-        }
-
-        public Vector2 getCurrentPosition() {
-            return currentPosition;
-        }
-
-        public Vector2 getPreviousPosition() {
-            return previousPosition;
-        }
     }
 }
