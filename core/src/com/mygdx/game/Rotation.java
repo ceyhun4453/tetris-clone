@@ -7,22 +7,17 @@ public class Rotation {
     private RotationState startState;
     private RotationState endState;
 
-    public Rotation() {
-    }
-
     public Rotation(RotationState startState, RotationState endState) {
         this.startState = startState;
         this.endState = endState;
     }
 
-    // Sets the startState of this Rotation ONLY IF isChangeable is true.
-    public void setStartState(RotationState startState) {
-            this.startState = startState;
+    public RotationState getStartState() {
+        return startState;
     }
 
-    // Sets the endState of this Rotation ONLY IF isChangeable is true.
-    public void setEndState(RotationState endState) {
-            this.endState = endState;
+    public RotationState getEndState() {
+        return endState;
     }
 
     @Override
