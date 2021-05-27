@@ -1,13 +1,15 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.IntArray;
 
 public class Clearer {
 
-    private final Clear clear = new Clear();
+    private Clear previousClear;
 
     // Returns a list of cleared rows.
     public Clear clearFullRows(Playfield field) {
+        Clear clear = new Clear();
         clear.numberOfLines = 0;
         for (int r = field.getPlayAreaHeight() - 1; r >= 0; r--) {
             if(isRowFull(field, r)) {
@@ -16,7 +18,18 @@ public class Clearer {
                 clear.numberOfLines += 1;
             }
         }
+        clear.clearType = ClearType.Regular;
+        if (previousClear != null && previousClear.clearType == clear.clearType
+                && previousClear.numberOfLines == clear.numberOfLines && clear.numberOfLines != 0) {
+            clear.streak = previousClear.streak + 1;
+        } else if (clear.numberOfLines != 0) {
+            clear.streak = 0;
+        }
 
+        if (clear.numberOfLines != 0) {
+            previousClear = clear;
+        }
+        Gdx.app.log("CLEARER", "Type: " + clear.clearType + "\tStreak: " + clear.streak + "\t Lines: " + clear.numberOfLines);
         return clear;
     }
     
