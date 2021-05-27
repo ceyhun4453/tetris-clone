@@ -4,8 +4,6 @@ public class SimpleTranslater implements Translater {
     public SimpleTranslater() {
     }
 
-    private final MutableMovementResult result = new MutableMovementResult(MovementResult.MovementType.LinearMovement, false);
-
     @Override
     public MovementResult movePiece(Playfield field, int x, int y) {
         boolean isMoved = false;
@@ -21,7 +19,6 @@ public class SimpleTranslater implements Translater {
             }
             field.mergeActivePiece();
         }
-        result.setSuccess(isMoved);
-        return result;
+        return new MutableMovementResult(MovementResult.MovementType.LinearMovement, isMoved);
     }
 }
