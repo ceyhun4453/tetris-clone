@@ -53,9 +53,6 @@ public class SimpleRotater implements Rotater {
         copyTempArrangementToPiece(tempArrangement, piece);
     }
 
-    private final Rotation rotation = new Rotation();
-    private final MutableMovementResult result = new MutableMovementResult(MovementResult.MovementType.RotationalMovement, false);
-
     @Override
     public MovementResult rotatePiece(Playfield field, int direction) {
         Tetrimino piece = field.getActivePiece();
@@ -65,9 +62,7 @@ public class SimpleRotater implements Rotater {
             RotationState lastState = piece.getRotationState();
             rotate(piece, direction);
             RotationState nextState = piece.getRotationState();
-            rotation.setStartState(lastState);
-            rotation.setEndState(nextState);
-            for (Vector2 v : wallKickData.getWallKickDataFor(rotation, piece)) {
+            for (Vector2 v : wallKickData.getWallKickDataFor(new Rotation(lastState, nextState), piece)) {
                 int resultantRow = field.getActivePieceRow() + Math.round(v.y);
                 int resultantCol = field.getActivePieceCol() + Math.round(v.x);
                 if (field.isSpaceAvaiable(resultantRow, resultantCol, piece)) {
@@ -81,8 +76,7 @@ public class SimpleRotater implements Rotater {
             }
             field.mergeActivePiece();
         }
-        result.setSuccess(isRotationPossible);
-        return result;
+        return new MutableMovementResult(MovementResult.MovementType.RotationalMovement, isRotationPossible);
     }
 
     private void calculateRotatedPointAndWriteToArray(int row, int col, Vector3 indexVector,
