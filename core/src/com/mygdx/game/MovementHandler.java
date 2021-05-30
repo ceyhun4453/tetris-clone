@@ -8,6 +8,7 @@ public class MovementHandler implements Translater, Rotater {
     private Translater translater;
     private Rotater rotater;
     private Movement lastSuccesfulMovement = null;
+
     public MovementHandler() {
         this.translater = new SimpleTranslater();
         this.rotater = new SimpleRotater(this);
@@ -21,7 +22,6 @@ public class MovementHandler implements Translater, Rotater {
         if (r.isSuccessful()) {
             lastSuccesfulMovement = new Movement(currentPosition, new Vector2(field.getActivePieceCol(),
                     field.getActivePieceRow()), currentRotationState, field.getActivePiece().getRotationState());
-            Gdx.app.log("Last Succesful Movement", lastSuccesfulMovement.toString());
         }
         return r;
     }
@@ -34,7 +34,6 @@ public class MovementHandler implements Translater, Rotater {
         if (r.isSuccessful()) {
             lastSuccesfulMovement = new Movement(currentPosition, new Vector2(field.getActivePieceCol(),
                     field.getActivePieceRow()), currentRotationState, field.getActivePiece().getRotationState());
-            Gdx.app.log("Last Succesful Movement", lastSuccesfulMovement.toString());
         }
         return r;
     }
