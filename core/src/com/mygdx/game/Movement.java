@@ -3,19 +3,37 @@ package com.mygdx.game;
 import com.badlogic.gdx.math.Vector2;
 
 public class Movement {
-    private Translation translation;
-    private Rotation rotation;
+    private Vector2 oldPosition;
+    private Vector2 newPosition;
+    private RotationState oldRotationState;
+    private RotationState newRotationState;
 
-    public Movement(Translation translation, Rotation rotation) {
-        this.translation = translation;
-        this.rotation = rotation;
+    public Movement(Vector2 oldPosition, Vector2 newPosition, RotationState oldRotationState, RotationState newRotationState) {
+        this.oldPosition = oldPosition;
+        this.newPosition = newPosition;
+        this.oldRotationState = oldRotationState;
+        this.newRotationState = newRotationState;
     }
 
-    public Translation getTranslation() {
-        return translation;
+    public Vector2 getOldPosition() {
+        return oldPosition;
     }
 
-    public Rotation getRotation() {
-        return rotation;
+    public Vector2 getNewPosition() {
+        return newPosition;
+    }
+
+    public RotationState getOldRotationState() {
+        return oldRotationState;
+    }
+
+    public RotationState getNewRotationState() {
+        return newRotationState;
+    }
+
+    @Override
+    public String toString() {
+        return "Old Position: " + oldPosition + " New Position: " + newPosition
+                + " Old Rotation: " + oldRotationState + " New Rotation: " + newRotationState;
     }
 }
