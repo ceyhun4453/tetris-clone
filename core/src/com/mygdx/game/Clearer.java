@@ -3,9 +3,12 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.IntArray;
+import sun.jvm.hotspot.gc.shared.TenuredSpace;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Clearer {
 
@@ -36,8 +39,8 @@ public class Clearer {
             return clear;
         }
 
-        clear.numberOfLines = clearFullRows(field, fullRows);
         clear.clearType = findClearType(field, lastMovement);
+        clear.numberOfLines = clearFullRows(field, fullRows);
         if (previousClear != null && previousClear.clearType == clear.clearType
                 && previousClear.numberOfLines == clear.numberOfLines && clear.numberOfLines != 0) {
             clear.streak = previousClear.streak + 1;
@@ -55,39 +58,41 @@ public class Clearer {
     private ClearType findClearType(Playfield field, Movement lastMovement) {
         if (field.getActivePiece().getTetrominoType() == Tetrimino.TetriminoType.T && (isRotation(lastMovement))) {
             //CHECK FOR T-SPIN
-            //RETURN T-SPIN
-            if (fullDiagonals(field) < 3) {
-                return ClearType.Regular;
+            Gdx.app.log("FRONT CORNERS: ", String.valueOf(getMinoCount(field, Side.FRONT)));
+            Gdx.app.log("BACK CORNERS: ", String.valueOf(getMinoCount(field, Side.BACK)));
+            if (fullDiagonals(field) >= 3) {
+                if (getMinoCount(field, Side.FRONT) == 2 && getMinoCount(field, Side.BACK) >= 1) {
+                    return ClearType.TSpin;
+                } else if (isSpecialWallKick(lastMovement)) {
+                    return ClearType.TSpin;
+                } else {
+                    return ClearType.MiniTSpin;
+                }
             }
-
         }
-
         return ClearType.Regular;
     }
 
-    private int fullDiagonals(Playfield field) {
-        int count = 0;
-         for (int r = field.getActivePieceRow(); r <= field.getActivePieceRow() + 2; r += 2) {
-             for (int c = field.getActivePieceCol(); c <= field.getActivePieceCol() + 2; c += 2) {
-                 if (field.getValue(r, c) != Playfield.EMPTY_VALUE) {
-                     count++;
-                 }
-             }
-        }
-
-         return count;
+    private boolean isSpecialWallKick(Movement movement) {
+        return movement.getNewPosition().x - movement.getOldPosition().x == 1 &&
+                movement.getNewPosition().y - movement.getOldPosition().y == -2;
     }
 
-    private int getCount(Playfield field, Side side, CellType cellType) {
+    private int fullDiagonals(Playfield field) {
+        return getOccupiedCount(field, Side.BACK) + getOccupiedCount(field, Side.FRONT);
+    }
+
+    // Returns the count of cells accepted (returns true when passed as argument) CellChecker on the
+    // front or back corners of the active piece in the field.
+    private int getCount(Playfield field, Side side, CellChecker checker) {
         int count = 0;
         Map<RotationState, Vector2[]> source = T_FRONT_CORNERS;
         if (side.equals(Side.BACK)) {
             source = T_BACK_CORNERS;
         }
-
         for (Vector2 vector2 : source.get(field.getActivePiece().getRotationState())) {
-            if (field.getCellType(field.getActivePieceRow() + (int) vector2.y,
-                    field.getActivePieceCol() + (int) vector2.x) == cellType) {
+            if (checker.check(field.getCellType(field.getActivePieceRow() + (int) vector2.y,
+                    field.getActivePieceCol() + (int) vector2.x))) {
                 count++;
             }
         }
@@ -95,9 +100,14 @@ public class Clearer {
         return count;
     }
 
-    private int occupiedCount(Playfield field, Side side) {
+    // Returns the number of corners occupied by tetriminos on the corners of the given side.
+    private int getMinoCount(Playfield field, Side side) {
+        return getCount(field, side, cellType -> cellType.equals(CellType.TETRIMINO));
+    }
 
-        return 0;
+    // Returns the number of occuped cells (not empty) on the corners of the given side.
+    private int getOccupiedCount(Playfield field, Side side) {
+        return getCount(field, side, cellType -> !cellType.equals(CellType.EMPTY));
     }
 
     private boolean isRotation(Movement movement) {
@@ -182,5 +192,9 @@ public class Clearer {
 
     private static enum Side {
         BACK, FRONT;
+    }
+
+    private interface CellChecker {
+        boolean check(CellType cellType);
     }
 }

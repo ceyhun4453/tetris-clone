@@ -83,6 +83,10 @@ public class Playfield {
         return CellType.TETRIMINO;
     }
 
+    public boolean isFull(int row, int col) {
+        return getValue(row, col) != EMPTY_VALUE;
+    }
+
     public void setValue(int value, int row, int col) {
         field[playAreaRowToRow(row)][playAreaColToCol(col)] = value;
     }
