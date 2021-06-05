@@ -51,15 +51,11 @@ public class Clearer {
         if (clear.numberOfLines != 0) {
             previousClear = clear;
         }
-        Gdx.app.log("CLEARER", "Type: " + clear.clearType + "\tStreak: " + clear.streak + "\t Lines: " + clear.numberOfLines);
         return clear;
     }
 
     private ClearType findClearType(Playfield field, Movement lastMovement) {
         if (field.getActivePiece().getTetrominoType() == Tetrimino.TetriminoType.T && (isRotation(lastMovement))) {
-            //CHECK FOR T-SPIN
-            Gdx.app.log("FRONT CORNERS: ", String.valueOf(getMinoCount(field, Side.FRONT)));
-            Gdx.app.log("BACK CORNERS: ", String.valueOf(getMinoCount(field, Side.BACK)));
             if (fullDiagonals(field) >= 3) {
                 if (getMinoCount(field, Side.FRONT) == 2 && getMinoCount(field, Side.BACK) >= 1) {
                     return ClearType.TSpin;
@@ -148,7 +144,7 @@ public class Clearer {
 
     private boolean isRowFull(Playfield field, int row) {
             for (int col = 0; col < field.getPlayAreaWidth(); col++) {
-                if (field.getValue(row, col) == 0) {
+                if (field.getCellType(row, col).equals(CellType.EMPTY)) {
                     return false;
                 }
             }

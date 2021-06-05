@@ -40,7 +40,9 @@ public class TetrisManager implements InputProcessor {
         Gravity.GravityEvent gravityEvent = gravity.gravitate(field, movementHandler, deltaT);
         scorer.updateScoreWithGravity(gravityEvent);
         if(!gravityEvent.isPieceInPlay()) {
-            int lastClearedRows = clearer.clearFullRows(field, movementHandler.getLastSuccesfulMovement()).getNumberOfLines();
+            Clearer.Clear lastClear = clearer.clearFullRows(field, movementHandler.getLastSuccesfulMovement());
+            int lastClearedRows = lastClear.getNumberOfLines();
+            Gdx.app.log("CLEAR TYPE", lastClear.getClearType().toString());
             clearedRows += lastClearedRows;
             Gdx.app.log("CLEARED ROWS: ", String.valueOf(clearedRows));
             scorer.updateScoreWithClear(lastClearedRows, currentLevel);
