@@ -147,7 +147,4 @@ public class Playfield {
         return colToPlayAreaCol(activePieceCol);
     }
 
-    public static enum CellType {
-        EMPTY, WALL, TETRIMINO;
-    }
 }

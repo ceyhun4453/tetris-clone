@@ -60,7 +60,6 @@ public class Clearer {
                 return ClearType.Regular;
             }
 
-
         }
 
         return ClearType.Regular;
@@ -79,7 +78,7 @@ public class Clearer {
          return count;
     }
 
-    private int minoCount(Playfield field, Side side) {
+    private int getCount(Playfield field, Side side, CellType cellType) {
         int count = 0;
         Map<RotationState, Vector2[]> source = T_FRONT_CORNERS;
         if (side.equals(Side.BACK)) {
@@ -88,12 +87,17 @@ public class Clearer {
 
         for (Vector2 vector2 : source.get(field.getActivePiece().getRotationState())) {
             if (field.getCellType(field.getActivePieceRow() + (int) vector2.y,
-                    field.getActivePieceCol() + (int) vector2.x) == Playfield.CellType.TETRIMINO) {
+                    field.getActivePieceCol() + (int) vector2.x) == cellType) {
                 count++;
             }
         }
 
         return count;
+    }
+
+    private int occupiedCount(Playfield field, Side side) {
+
+        return 0;
     }
 
     private boolean isRotation(Movement movement) {
