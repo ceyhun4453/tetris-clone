@@ -6,21 +6,21 @@ filter: Nearest, Nearest
 repeat: none
 ipiece
   rotate: false
-  xy: 104, 142
+  xy: 138, 176
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 lpiece
   rotate: false
-  xy: 172, 210
+  xy: 104, 108
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 opiece
   rotate: false
-  xy: 104, 108
+  xy: 138, 142
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
@@ -32,6 +32,13 @@ background
   orig: 100, 240
   offset: 0, 0
   index: -1
+ghost
+  rotate: false
+  xy: 104, 142
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 jpiece
   rotate: false
   xy: 104, 176
@@ -39,9 +46,9 @@ jpiece
   orig: 32, 32
   offset: 0, 0
   index: -1
-zpiece
+spiece
   rotate: false
-  xy: 138, 176
+  xy: 172, 210
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
@@ -53,7 +60,7 @@ tpiece
   orig: 32, 32
   offset: 0, 0
   index: -1
-spiece
+zpiece
   rotate: false
   xy: 138, 210
   size: 32, 32

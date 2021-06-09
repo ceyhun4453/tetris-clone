@@ -40,6 +40,7 @@ public class Assets implements Disposable {
         public final TextureRegion tPiece;
         public final TextureRegion zPiece;
         public final TextureRegion sPiece;
+        public final TextureRegion ghostPiece;
 
         private SpriteAssets(TextureAtlas atlas) {
             lPiece = atlas.findRegion("lpiece");
@@ -49,6 +50,7 @@ public class Assets implements Disposable {
             tPiece = atlas.findRegion("tpiece");
             zPiece = atlas.findRegion("zpiece");
             sPiece = atlas.findRegion("spiece");
+            ghostPiece = atlas.findRegion("ghost");
             background = atlas.findRegion("background");
         }
     }
