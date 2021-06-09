@@ -28,7 +28,7 @@ public class Gravity {
 
     private boolean isLockingDown(Playfield playfield) {
         playfield.unmergeActivePiece();
-        if (!playfield.isSpaceAvaiable(playfield.getActivePieceRow() - 1, playfield.getActivePieceCol(), playfield.getActivePiece())) {
+        if (!playfield.isSpaceAvailable(playfield.getActivePieceRow() - 1, playfield.getActivePieceCol(), playfield.getActivePiece())) {
             playfield.mergeActivePiece();
             return true;
         }

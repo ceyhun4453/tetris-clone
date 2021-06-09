@@ -12,7 +12,7 @@ public class SimpleTranslater implements Translater {
         Tetrimino piece = field.getActivePiece();
         if (piece != null) {
             field.unmergeActivePiece();
-            if (field.isSpaceAvaiable(pieceRow + y, pieceCol + x, piece)) {
+            if (field.isSpaceAvailable(pieceRow + y, pieceCol + x, piece)) {
                 field.setActivePieceCol(pieceCol + x);
                 field.setActivePieceRow(pieceRow + y);
                 isMoved = true;

@@ -1,6 +1,5 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -65,7 +64,7 @@ public class SimpleRotater implements Rotater {
             for (Vector2 v : wallKickData.getWallKickDataFor(new Rotation(lastState, nextState), piece)) {
                 int resultantRow = field.getActivePieceRow() + Math.round(v.y);
                 int resultantCol = field.getActivePieceCol() + Math.round(v.x);
-                if (field.isSpaceAvaiable(resultantRow, resultantCol, piece)) {
+                if (field.isSpaceAvailable(resultantRow, resultantCol, piece)) {
                     translater.movePiece(field, Math.round(v.x), Math.round(v.y));
                     isRotationPossible = true;
                     break;

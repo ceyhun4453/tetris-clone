@@ -83,10 +83,6 @@ public class Playfield {
         return CellType.TETRIMINO;
     }
 
-    public boolean isFull(int row, int col) {
-        return getValue(row, col) != EMPTY_VALUE;
-    }
-
     public void setValue(int value, int row, int col) {
         field[playAreaRowToRow(row)][playAreaColToCol(col)] = value;
     }
@@ -99,7 +95,7 @@ public class Playfield {
         return playAreaEndRow - playAreaStartRow + 1;
     }
 
-    public boolean isSpaceAvaiable(int row, int col, Tetrimino piece) {
+    public boolean isSpaceAvailable(int row, int col, Tetrimino piece) {
         int pieceLength = piece.getLength();
         for (int r = 0; r < pieceLength; r++) {
             for (int c = 0; c < pieceLength; c++) {

@@ -62,7 +62,7 @@ public class TetrisManager implements InputProcessor {
             // GAMEOVER
             return;
         }
-        if (!field.isSpaceAvaiable(newPieceVerticalPosition, newPieceHorizontalPosition, newPiece)) {
+        if (!field.isSpaceAvailable(newPieceVerticalPosition, newPieceHorizontalPosition, newPiece)) {
             newPieceVerticalPosition++;
             addNewPiece(newPiece);
         }
