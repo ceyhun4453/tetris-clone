@@ -3,7 +3,8 @@ package com.mygdx.game;
 import java.util.Arrays;
 
 public class Playfield {
-    private static final int WALL_VALUE = 9;
+    public static final int WALL_VALUE = 9;
+    public static final int EMPTY_VALUE = 0;
     private final int playFieldWidth = 16;
     private final int playFieldHeight = 48;
     private final int playAreaStartRow = 3;
@@ -29,7 +30,7 @@ public class Playfield {
             if (i < playAreaStartRow) {
                 Arrays.fill(array, WALL_VALUE);
             } else {
-                Arrays.fill(array, 0);
+                Arrays.fill(array, EMPTY_VALUE);
                 for (int j = 0; j < playAreaStartCol; j++) {
                     array[j] = WALL_VALUE;
                     array[array.length - (j + 1)] = WALL_VALUE;
@@ -57,8 +58,8 @@ public class Playfield {
             int pieceLength = activePiece.getLength();
             for (int r = 0; r < pieceLength; r++) {
                 for (int c = 0; c < pieceLength; c++) {
-                    if (activePiece.getValue(r, c) != 0) {
-                        field[activePieceRow + r][activePieceCol + c] = 0;
+                    if (activePiece.getValue(r, c) != EMPTY_VALUE) {
+                        field[activePieceRow + r][activePieceCol + c] = EMPTY_VALUE;
                     }
                 }
             }
@@ -66,8 +67,24 @@ public class Playfield {
         }
     }
 
+    // Gets the exact value stored in the playfield. Callers should use getType()
+    // unless they really need the exact value to function.
     public int getValue(int row, int col) {
         return field[playAreaRowToRow(row)][playAreaColToCol(col)];
+    }
+
+    // Gets the type of the cell.
+    public CellType getCellType(int row, int col) {
+        if (getValue(row, col) == WALL_VALUE) {
+            return CellType.WALL;
+        } else if (getValue(row, col) == EMPTY_VALUE) {
+            return CellType.EMPTY;
+        }
+        return CellType.TETRIMINO;
+    }
+
+    public boolean isFull(int row, int col) {
+        return getValue(row, col) != EMPTY_VALUE;
     }
 
     public void setValue(int value, int row, int col) {
@@ -86,7 +103,7 @@ public class Playfield {
         int pieceLength = piece.getLength();
         for (int r = 0; r < pieceLength; r++) {
             for (int c = 0; c < pieceLength; c++) {
-                if (field[playAreaRowToRow(row) + r][playAreaColToCol(col) + c] != 0 && piece.getValue(r, c) != 0) {
+                if (field[playAreaRowToRow(row) + r][playAreaColToCol(col) + c] != EMPTY_VALUE && piece.getValue(r, c) != EMPTY_VALUE) {
                     return false;
                 }
             }
@@ -133,4 +150,5 @@ public class Playfield {
     public int getActivePieceCol() {
         return colToPlayAreaCol(activePieceCol);
     }
+
 }

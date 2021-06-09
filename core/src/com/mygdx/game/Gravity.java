@@ -1,7 +1,5 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.Gdx;
-
 public class Gravity {
 
     private final float fallTime = 0.75f;
@@ -11,24 +9,17 @@ public class Gravity {
     private float fallCounter = 0.0f;
     private float fallModifier = 1.0f;
     private GravityHandler currentState;
-    private final GravityEvent gravityEvent;
 
     public Gravity() {
         currentState = GravityState.RegularGravity;
-        gravityEvent = new GravityEvent(false, 0, GravityState.RegularGravity);
     }
 
-    public GravityEvent gravitate(Playfield playfield, Mover mover, float deltaT) {
+    public GravityEvent gravitate(Playfield playfield, Translater mover, float deltaT) {
         if (isLockingDown(playfield)) {
             return handleLock(playfield, deltaT);
         }
-        gravityEvent.reset();
-        currentState.gravitate(playfield, mover, this, deltaT);
-        if (currentState.equals(GravityState.HardDrop)) {
-            currentState = GravityState.RegularGravity;
-            lockTimer = lockTime;
-        }
-        return gravityEvent;
+        lockTimer = 0;
+        return currentState.gravitate(playfield, mover, this, deltaT);
     }
 
     private void progressLockdown(float deltaT) {
@@ -49,18 +40,21 @@ public class Gravity {
     private GravityEvent handleLock(Playfield playfield, float deltaT) {
         if (lockTimer > lockTime) {
             lockTimer = 0;
-            gravityEvent.isPieceInPlay = false;
-            return gravityEvent;
+            return new GravityEvent(false, 0, GravityState.RegularGravity);
         }
         progressLockdown(deltaT);
-        gravityEvent.isPieceInPlay = true;
-        gravityEvent.numberOfCellsMoved = 0;
-        return gravityEvent;
+        return new GravityEvent(true, 0, GravityState.RegularGravity);
 
     }
 
     public void stepUpFallSpeed() {
         fallModifier += 0.2f;
+    }
+
+    public void setStartingLevel(int level) {
+        for (int i = 0; i < level; i++) {
+            stepUpFallSpeed();
+        }
     }
 
     public void startSoftDrop() {
@@ -76,26 +70,27 @@ public class Gravity {
     }
 
     interface GravityHandler {
-        GravityEvent gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT);
+        GravityEvent gravitate(Playfield playfield, Translater mover, Gravity gravity, float deltaT);
     }
 
     public enum GravityState implements GravityHandler {
         RegularGravity {
             @Override
-            public GravityEvent gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT) {
+            public GravityEvent gravitate(Playfield playfield, Translater mover, Gravity gravity, float deltaT) {
                 gravity.fallCounter += deltaT * gravity.fallModifier;
+                GravityEvent gravityEvent = new GravityEvent();
                 while (gravity.fallCounter > gravity.fallTime) {
                     if (playfield.getActivePiece() == null) {
-                        gravity.gravityEvent.setFields(false, 0, RegularGravity);
+                        return new GravityEvent(false, 0, RegularGravity);
                     }
-                    if (mover.movePiece(playfield, 0, -1)) {
-                        gravity.gravityEvent.numberOfCellsMoved += 1;
+                    if (mover.movePiece(playfield, 0, -1).isSuccessful()) {
+                        gravityEvent.numberOfCellsMoved += 1;
                     }
-                    gravity.fallCounter -= gravity.fallTime;
+                    gravity.fallCounter = 0;
                 }
-                gravity.gravityEvent.state = RegularGravity;
-                gravity.gravityEvent.isPieceInPlay = true;
-                return gravity.gravityEvent;
+                gravityEvent.state = this;
+                gravityEvent.isPieceInPlay = true;
+                return gravityEvent;
             }
         },
 
@@ -103,22 +98,23 @@ public class Gravity {
             private final int softDropModifier = 20;
 
             @Override
-            public GravityEvent gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT) {
-                RegularGravity.gravitate(playfield, mover, gravity, softDropModifier * deltaT);
-                gravity.gravityEvent.state = SoftDrop;
-                return gravity.gravityEvent;
+            public GravityEvent gravitate(Playfield playfield, Translater mover, Gravity gravity, float deltaT) {
+                GravityEvent gravityEvent = RegularGravity.gravitate(playfield, mover, gravity, softDropModifier * deltaT);
+                gravityEvent.state = SoftDrop;
+                return gravityEvent;
             }
         },
 
         HardDrop {
             @Override
-            public GravityEvent gravitate(Playfield playfield, Mover mover, Gravity gravity, float deltaT) {
+            public GravityEvent gravitate(Playfield playfield, Translater mover, Gravity gravity, float deltaT) {
                 int fallCounter = 0;
-                while (mover.movePiece(playfield, 0, -1)) {
+                while (mover.movePiece(playfield, 0, -1).isSuccessful()) {
                     fallCounter++;
                 }
-                gravity.gravityEvent.setFields(true, fallCounter, HardDrop);
-                return gravity.gravityEvent;
+                gravity.currentState = GravityState.RegularGravity;
+                gravity.lockTimer = gravity.lockTime;
+                return new GravityEvent(true, fallCounter, this);
             }
         };
     }
@@ -129,22 +125,13 @@ public class Gravity {
         private int numberOfCellsMoved;
         private GravityState state;
 
+        public GravityEvent() {
+        }
+
         private GravityEvent(boolean isPieceInPlay, int numberOfCellsMoved, GravityState state) {
             this.isPieceInPlay = isPieceInPlay;
             this.numberOfCellsMoved = numberOfCellsMoved;
             this.state = state;
-        }
-
-        private void setFields(boolean isPieceInPlay, int numberOfCellsMoved, GravityState state) {
-            this.isPieceInPlay = isPieceInPlay;
-            this.numberOfCellsMoved = numberOfCellsMoved;
-            this.state = state;
-        }
-
-        private void reset() {
-            state = GravityState.RegularGravity;
-            numberOfCellsMoved = 0;
-            isPieceInPlay = false;
         }
 
         public boolean isPieceInPlay() {

@@ -1,10 +1,11 @@
 package com.mygdx.game;
 
-public class Mover {
-    public Mover() {
+public class SimpleTranslater implements Translater {
+    public SimpleTranslater() {
     }
 
-    public boolean movePiece(Playfield field, int x, int y) {
+    @Override
+    public MovementResult movePiece(Playfield field, int x, int y) {
         boolean isMoved = false;
         int pieceRow = field.getActivePieceRow();
         int pieceCol = field.getActivePieceCol();
@@ -18,6 +19,6 @@ public class Mover {
             }
             field.mergeActivePiece();
         }
-        return isMoved;
+        return new MutableMovementResult(MovementResult.MovementType.LinearMovement, isMoved);
     }
 }

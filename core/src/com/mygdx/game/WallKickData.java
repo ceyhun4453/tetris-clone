@@ -18,38 +18,38 @@ public class WallKickData {
     }
 
     public void initMaps() {
-        wallKicks.put(new Rotation(RotationState.SPAWN, RotationState.CLOCKWISE90, false), new Vector2[]{
+        wallKicks.put(new Rotation(RotationState.SPAWN, RotationState.CLOCKWISE90), new Vector2[]{
                 new Vector2(0, 0), new Vector2(-1, 0), new Vector2(-1, 1), new Vector2(0, -2), new Vector2(-1, -2)});
-        wallKicks.put(new Rotation(RotationState.CLOCKWISE90, RotationState.SPAWN, false), new Vector2[]{
+        wallKicks.put(new Rotation(RotationState.CLOCKWISE90, RotationState.SPAWN), new Vector2[]{
                 new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, -1), new Vector2(0, 2), new Vector2(1, 2)});
-        wallKicks.put(new Rotation(RotationState.CLOCKWISE90, RotationState.CLOCKWISE180, false), new Vector2[]{
+        wallKicks.put(new Rotation(RotationState.CLOCKWISE90, RotationState.CLOCKWISE180), new Vector2[]{
                 new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, -1), new Vector2(0, 2), new Vector2(1, 2)});
-        wallKicks.put(new Rotation(RotationState.CLOCKWISE180, RotationState.CLOCKWISE90, false), new Vector2[]{
+        wallKicks.put(new Rotation(RotationState.CLOCKWISE180, RotationState.CLOCKWISE90), new Vector2[]{
                 new Vector2(0, 0), new Vector2(-1, 0), new Vector2(-1, 1), new Vector2(0, -2), new Vector2(-1, -2)});
-        wallKicks.put(new Rotation(RotationState.CLOCKWISE180, RotationState.CLOCKWISE270, false), new Vector2[]{
+        wallKicks.put(new Rotation(RotationState.CLOCKWISE180, RotationState.CLOCKWISE270), new Vector2[]{
                 new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, -2), new Vector2(1, -2)});
-        wallKicks.put(new Rotation(RotationState.CLOCKWISE270, RotationState.CLOCKWISE180, false), new Vector2[]{
+        wallKicks.put(new Rotation(RotationState.CLOCKWISE270, RotationState.CLOCKWISE180), new Vector2[]{
                 new Vector2(0, 0), new Vector2(-1, 0), new Vector2(-1, -1), new Vector2(0, 2), new Vector2(-1, 2)});
-        wallKicks.put(new Rotation(RotationState.CLOCKWISE270, RotationState.SPAWN, false), new Vector2[]{
+        wallKicks.put(new Rotation(RotationState.CLOCKWISE270, RotationState.SPAWN), new Vector2[]{
                 new Vector2(0, 0), new Vector2(-1, 0), new Vector2(-1, -1), new Vector2(0, 2), new Vector2(-1, 2)});
-        wallKicks.put(new Rotation(RotationState.SPAWN, RotationState.CLOCKWISE270, false), new Vector2[]{
+        wallKicks.put(new Rotation(RotationState.SPAWN, RotationState.CLOCKWISE270), new Vector2[]{
                 new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, -2), new Vector2(1, -2)});
 
-        wallKicksForIPiece.put(new Rotation(RotationState.SPAWN, RotationState.CLOCKWISE90, false), new Vector2[]{
+        wallKicksForIPiece.put(new Rotation(RotationState.SPAWN, RotationState.CLOCKWISE90), new Vector2[]{
                 new Vector2(0, 0), new Vector2(-2, 0), new Vector2(1, 0), new Vector2(-2, -1), new Vector2(1, 2)});
-        wallKicksForIPiece.put(new Rotation(RotationState.CLOCKWISE90, RotationState.SPAWN, false), new Vector2[]{
+        wallKicksForIPiece.put(new Rotation(RotationState.CLOCKWISE90, RotationState.SPAWN), new Vector2[]{
                 new Vector2(0, 0), new Vector2(2, 0), new Vector2(-1, 0), new Vector2(2, 1), new Vector2(-1, -2)});
-        wallKicksForIPiece.put(new Rotation(RotationState.CLOCKWISE90, RotationState.CLOCKWISE180, false), new Vector2[]{
+        wallKicksForIPiece.put(new Rotation(RotationState.CLOCKWISE90, RotationState.CLOCKWISE180), new Vector2[]{
                 new Vector2(0, 0), new Vector2(-1, 0), new Vector2(2, 0), new Vector2(-1, 2), new Vector2(2, -1)});
-        wallKicksForIPiece.put(new Rotation(RotationState.CLOCKWISE180, RotationState.CLOCKWISE90, false), new Vector2[]{
+        wallKicksForIPiece.put(new Rotation(RotationState.CLOCKWISE180, RotationState.CLOCKWISE90), new Vector2[]{
                 new Vector2(0, 0), new Vector2(1, 0), new Vector2(-2, 0), new Vector2(1, -2), new Vector2(-2, 1)});
-        wallKicksForIPiece.put(new Rotation(RotationState.CLOCKWISE180, RotationState.CLOCKWISE270, false), new Vector2[]{
+        wallKicksForIPiece.put(new Rotation(RotationState.CLOCKWISE180, RotationState.CLOCKWISE270), new Vector2[]{
                 new Vector2(0, 0), new Vector2(2, 0), new Vector2(-1, 0), new Vector2(2, 1), new Vector2(-1, -2)});
-        wallKicksForIPiece.put(new Rotation(RotationState.CLOCKWISE270, RotationState.CLOCKWISE180, false), new Vector2[]{
+        wallKicksForIPiece.put(new Rotation(RotationState.CLOCKWISE270, RotationState.CLOCKWISE180), new Vector2[]{
                 new Vector2(0, 0), new Vector2(-2, 0), new Vector2(1, 0), new Vector2(-2, -1), new Vector2(1, 2)});
-        wallKicksForIPiece.put(new Rotation(RotationState.CLOCKWISE270, RotationState.SPAWN, false), new Vector2[]{
+        wallKicksForIPiece.put(new Rotation(RotationState.CLOCKWISE270, RotationState.SPAWN), new Vector2[]{
                 new Vector2(0, 0), new Vector2(1, 0), new Vector2(-2, 0), new Vector2(1, -2), new Vector2(-2, 1)});
-        wallKicksForIPiece.put(new Rotation(RotationState.SPAWN, RotationState.CLOCKWISE270, false), new Vector2[]{
+        wallKicksForIPiece.put(new Rotation(RotationState.SPAWN, RotationState.CLOCKWISE270), new Vector2[]{
                 new Vector2(0, 0), new Vector2(-1, 0), new Vector2(2, 0), new Vector2(-1, 2), new Vector2(2, -1)});
     }
 
