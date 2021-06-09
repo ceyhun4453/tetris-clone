@@ -51,12 +51,6 @@ public class Gravity {
         fallModifier += 0.2f;
     }
 
-    public void setStartingLevel(int level) {
-        for (int i = 0; i < level; i++) {
-            stepUpFallSpeed();
-        }
-    }
-
     public void startSoftDrop() {
         currentState = GravityState.SoftDrop;
     }
