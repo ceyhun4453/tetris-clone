@@ -5,6 +5,7 @@ import java.util.Arrays;
 public class Playfield {
     public static final int WALL_VALUE = 9;
     public static final int EMPTY_VALUE = 0;
+    public static final int GHOST = 143;
     private final int playFieldWidth = 16;
     private final int playFieldHeight = 48;
     private final int playAreaStartRow = 3;
@@ -15,7 +16,9 @@ public class Playfield {
     private Tetrimino activePiece;
     private int activePieceRow;
     private int activePieceCol;
-    // This flag is used to prevent repeated calls of unmerge or merge methods so that callers can use merge and unmerge
+    private int ghostRow;
+    private int ghostCol;
+    // This flag is used to prevent repeated calls of unmerge or merge methods so that cfield[playAreaRowToRow(row) + r][playAreaColToCol(col) + c] != EMPTY_VALUEallers can use merge and unmerge
     // without worrying about causing weird bugs.
     private boolean isMerged = false;
 
@@ -73,14 +76,19 @@ public class Playfield {
         return field[playAreaRowToRow(row)][playAreaColToCol(col)];
     }
 
-    // Gets the type of the cell.
-    public CellType getCellType(int row, int col) {
-        if (getValue(row, col) == WALL_VALUE) {
+    private CellType toCellType(int value) {
+        if (value == WALL_VALUE) {
             return CellType.WALL;
-        } else if (getValue(row, col) == EMPTY_VALUE) {
+        } else if (value == EMPTY_VALUE || value == GHOST) {
             return CellType.EMPTY;
         }
+
         return CellType.TETRIMINO;
+    }
+
+    // Gets the type of the cell.
+    public CellType getCellType(int row, int col) {
+        return toCellType(getValue(row, col));
     }
 
     public void setValue(int value, int row, int col) {
@@ -99,7 +107,8 @@ public class Playfield {
         int pieceLength = piece.getLength();
         for (int r = 0; r < pieceLength; r++) {
             for (int c = 0; c < pieceLength; c++) {
-                if (field[playAreaRowToRow(row) + r][playAreaColToCol(col) + c] != EMPTY_VALUE && piece.getValue(r, c) != EMPTY_VALUE) {
+                if (toCellType(field[playAreaRowToRow(row) + r][playAreaColToCol(col) + c]) != CellType.EMPTY
+                        && toCellType(piece.getValue(r, c)) != CellType.EMPTY) {
                     return false;
                 }
             }
@@ -147,4 +156,32 @@ public class Playfield {
         return colToPlayAreaCol(activePieceCol);
     }
 
+    public void updateGhost(int row, int col) {
+        unmergeGhost();
+        ghostRow = playAreaRowToRow(row);
+        ghostCol = playAreaColToCol(col);
+        mergeGhost();
+    }
+
+    private void unmergeGhost() {
+        int length = activePiece.getLength();
+        for (int r = 0; r < length; r++) {
+            for (int c = 0; c < length; c++) {
+                if (toCellType(field[ghostRow + r][ghostCol + c]) == CellType.EMPTY) {
+                    field[ghostRow + r][ghostCol + c] = EMPTY_VALUE;
+                }
+            }
+        }
+    }
+
+    private void mergeGhost() {
+        int length = activePiece.getLength();
+        for (int r = 0; r < length; r++) {
+            for (int c = 0; c < length; c++) {
+                if (activePiece.getValue(r, c) != EMPTY_VALUE) {
+                    field[ghostRow + r][ghostCol + c] = GHOST;
+                }
+            }
+        }
+    }
 }

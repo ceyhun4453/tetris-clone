@@ -17,8 +17,21 @@ public class SimpleTranslater implements Translater {
                 field.setActivePieceRow(pieceRow + y);
                 isMoved = true;
             }
+
+            if (isMoved) {
+                moveGhost(field);
+            }
             field.mergeActivePiece();
         }
         return new MutableMovementResult(MovementResult.MovementType.LinearMovement, isMoved);
+    }
+
+    private void moveGhost(Playfield field) {
+        int ghostRow = field.getActivePieceRow();
+        int ghostCol = field.getActivePieceCol();
+        while (field.isSpaceAvailable(ghostRow - 1, ghostCol, field.getActivePiece())) {
+            ghostRow -= 1;
+        }
+        field.updateGhost(ghostRow, ghostCol);
     }
 }

@@ -49,6 +49,10 @@ public class TetrisRenderer {
     }
 
     private TextureRegion getTextureForPieceValue(int value) {
+        if (value == Playfield.GHOST) {
+            return assets.getSprites().ghostPiece;
+        }
+
         Tetrimino.TetriminoType t = Tetrimino.TetriminoType.getTypeForConstant(value);
         switch (t) {
             case I:
