@@ -15,7 +15,7 @@ public class TetrisManager implements InputProcessor {
     private final Clearer clearer;
     private final Gravity gravity;
     private final Scorer scorer;
-    private final TetriminoGenerator generator;
+    private final TetriminoSource source;
     private final TetrisRenderer renderer;
 
     private int newPieceVerticalPosition = 21;
@@ -28,13 +28,13 @@ public class TetrisManager implements InputProcessor {
         clearer = new Clearer();
         scorer = new Scorer();
         renderer = new TetrisRenderer(field, batch, assets);
-        generator = new TetriminoGenerator();
+        source = new TetriminoSource(new TetriminoGenerator(), new TetriminoHolder());
         gravity = new Gravity();
     }
 
     public void loop(float deltaT) {
         if (field.getActivePiece() == null) {
-            addNewPiece(generator.getRandomTetrimino());
+            addNewPiece(source.createRandomTetrimino());
         }
 
         Gravity.GravityEvent gravityEvent = gravity.gravitate(field, movementHandler, deltaT);
@@ -52,7 +52,7 @@ public class TetrisManager implements InputProcessor {
                 clearedRows -= clearsPerLevel;
                 Gdx.app.log("LEVEL", String.valueOf(currentLevel));
             }
-            addNewPiece(generator.getRandomTetrimino());
+            addNewPiece(source.createRandomTetrimino());
         }
         renderer.render();
     }
@@ -93,6 +93,15 @@ public class TetrisManager implements InputProcessor {
             case Input.Keys.SPACE:
                 gravity.hardDrop();
                 return true;
+            case Input.Keys.C:
+                TetriminoHolder.HoldResult result = source.holdPiece(field.getActivePiece());
+                if (result.isSaved() && result.getPiece() != null) {
+                    field.unmergeActivePiece();
+                    addNewPiece(result.getPiece());
+                } else if (result.isSaved() && result.getPiece() == null) {
+                    field.unmergeActivePiece();
+                    addNewPiece(source.createRandomTetrimino());
+                }
             default: return false;
         }
     }
