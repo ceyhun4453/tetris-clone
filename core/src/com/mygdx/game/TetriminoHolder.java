@@ -30,9 +30,9 @@ public class TetriminoHolder {
         isSwapped = false;
     }
 
-    public class HoldResult {
-        private boolean isSaved;
-        private Tetrimino piece;
+    public static class HoldResult {
+        private final boolean isSaved;
+        private final Tetrimino piece;
 
         private HoldResult(boolean isSaved, Tetrimino piece) {
             this.isSaved = isSaved;

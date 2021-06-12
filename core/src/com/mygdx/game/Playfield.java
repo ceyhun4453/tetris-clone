@@ -13,6 +13,8 @@ public class Playfield {
     private final int playAreaStartCol = 3;
     private final int playAreaEndCol = 12;
     private final int[][] field;
+    private int newPieceRow = 21;
+    private int newPieceCol = 4;
     private Tetrimino activePiece;
     private int activePieceRow;
     private int activePieceCol;
@@ -133,6 +135,10 @@ public class Playfield {
     }
 
     public void setActivePiece(Tetrimino activePiece) {
+        // To make sure ghost piece is immediately removed when the active piece is changed.
+        if (this.activePiece != null) {
+            unmergeGhost();
+        }
         this.activePiece = activePiece;
     }
 

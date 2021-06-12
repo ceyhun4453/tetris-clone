@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class TetrisManager implements InputProcessor {
 
     private static final int clearsPerLevel = 10;
-    private final int newPieceHorizontalPosition = 4;
 
     private final Playfield field;
     private final MovementHandler movementHandler;
@@ -17,8 +16,6 @@ public class TetrisManager implements InputProcessor {
     private final Scorer scorer;
     private final TetriminoSource source;
     private final TetrisRenderer renderer;
-
-    private int newPieceVerticalPosition = 21;
     private int currentLevel = 1;
     private int clearedRows = 0;
 
@@ -30,13 +27,10 @@ public class TetrisManager implements InputProcessor {
         renderer = new TetrisRenderer(field, batch, assets);
         source = new TetriminoSource(new TetriminoGenerator(), new TetriminoHolder());
         gravity = new Gravity();
+        source.attemptToAdd(field, null);
     }
 
     public void loop(float deltaT) {
-        if (field.getActivePiece() == null) {
-            addNewPiece(source.createRandomTetrimino());
-        }
-
         Gravity.GravityEvent gravityEvent = gravity.gravitate(field, movementHandler, deltaT);
         scorer.updateScoreWithGravity(gravityEvent);
         if(!gravityEvent.isPieceInPlay()) {
@@ -52,24 +46,12 @@ public class TetrisManager implements InputProcessor {
                 clearedRows -= clearsPerLevel;
                 Gdx.app.log("LEVEL", String.valueOf(currentLevel));
             }
-            addNewPiece(source.createRandomTetrimino());
+        }
+        if (!source.attemptToAdd(field, gravityEvent)) {
+            //GAMEOVER
+            System.out.println("Game over!");
         }
         renderer.render();
-    }
-
-    private void addNewPiece(Tetrimino newPiece) {
-        if (newPieceVerticalPosition > 24) {
-            // GAMEOVER
-            return;
-        }
-        if (!field.isSpaceAvailable(newPieceVerticalPosition, newPieceHorizontalPosition, newPiece)) {
-            newPieceVerticalPosition++;
-            addNewPiece(newPiece);
-        }
-        field.setActivePieceRow(newPieceVerticalPosition);
-        field.setActivePieceCol(newPieceHorizontalPosition);
-        field.setActivePiece(newPiece);
-        field.mergeActivePiece();
     }
 
     @Override
@@ -94,14 +76,7 @@ public class TetrisManager implements InputProcessor {
                 gravity.hardDrop();
                 return true;
             case Input.Keys.C:
-                TetriminoHolder.HoldResult result = source.holdPiece(field.getActivePiece());
-                if (result.isSaved() && result.getPiece() != null) {
-                    field.unmergeActivePiece();
-                    addNewPiece(result.getPiece());
-                } else if (result.isSaved() && result.getPiece() == null) {
-                    field.unmergeActivePiece();
-                    addNewPiece(source.createRandomTetrimino());
-                }
+                source.holdPiece(field);
             default: return false;
         }
     }

@@ -2,6 +2,10 @@ package com.mygdx.game;
 
 public class TetriminoSource {
 
+    private final int spawnCol = 4;
+    private final int maxSpawnRow = 24;
+
+    private int spawnRow = 21;
     private TetriminoGenerator generator;
     private TetriminoHolder holder;
 
@@ -10,12 +14,48 @@ public class TetriminoSource {
         this.holder = holder;
     }
 
-    public Tetrimino createRandomTetrimino() {
-        holder.resetSwapState();
-        return generator.getRandomTetrimino();
+    // It will add a piece to the field IF there is currently no piece in play, or
+    // the active is is locked in the current frame.
+    public boolean attemptToAdd(Playfield field, Gravity.GravityEvent lastGravityEvent) {
+        // Add a new piece if the the previous piece is locked.
+        if (field.getActivePiece() == null) {
+            return addNewPiece(field, generator.getRandomTetrimino());
+        }
+
+        if (!lastGravityEvent.isPieceInPlay()) {
+            holder.resetSwapState();
+            return addNewPiece(field, generator.getRandomTetrimino());
+        }
+
+        return true;
     }
 
-    public TetriminoHolder.HoldResult holdPiece(Tetrimino piece) {
-        return holder.holdPiece(piece);
+    public void holdPiece(Playfield field) {
+        TetriminoHolder.HoldResult result = holder.holdPiece(field.getActivePiece());
+        if (result.getPiece() == null && result.isSaved()) {
+            field.unmergeActivePiece();
+            addNewPiece(field, generator.getRandomTetrimino());
+        } else if (result.getPiece() != null && result.isSaved()) {
+            field.unmergeActivePiece();
+            addNewPiece(field, result.getPiece());
+        }
+
+
+    }
+
+    private boolean addNewPiece(Playfield field, Tetrimino newPiece) {
+        if (spawnRow > maxSpawnRow) {
+            // GAMEOVER
+            return false;
+        }
+        if (!field.isSpaceAvailable(spawnRow, spawnCol, newPiece)) {
+            spawnRow++;
+            return addNewPiece(field, newPiece);
+        }
+        field.setActivePieceRow(spawnRow);
+        field.setActivePieceCol(spawnCol);
+        field.setActivePiece(newPiece);
+        field.mergeActivePiece();
+        return true;
     }
 }
