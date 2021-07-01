@@ -36,10 +36,16 @@ public class TetrisManager {
     }
 
     private void registerCommands() {
-        inputHandler.registerCommand(Input.Keys.LEFT, TetrisInputHandler.KEY_DOWN,
-                () -> movementHandler.movePiece(field, -1, 0));
-        inputHandler.registerCommand(Input.Keys.RIGHT, TetrisInputHandler.KEY_DOWN,
-                () -> movementHandler.movePiece(field, 1, 0));
+        inputHandler.registerCommand(Input.Keys.LEFT, TetrisInputHandler.KEY_DOWN, () -> {
+            if (!autorepeat.isOn()) {
+                movementHandler.movePiece(field, -1, 0);
+            }
+        });
+        inputHandler.registerCommand(Input.Keys.RIGHT, TetrisInputHandler.KEY_DOWN, () -> {
+            if (!autorepeat.isOn()) {
+                movementHandler.movePiece(field, 1, 0);
+            }
+        });
         inputHandler.registerCommand(Input.Keys.X, TetrisInputHandler.KEY_DOWN,
                 () -> movementHandler.rotatePiece(field, Rotater.CLOCKWISE));
         inputHandler.registerCommand(Input.Keys.Z, TetrisInputHandler.KEY_DOWN,

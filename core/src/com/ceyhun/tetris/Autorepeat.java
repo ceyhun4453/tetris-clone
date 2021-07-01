@@ -31,14 +31,6 @@ public class Autorepeat {
         currentDirectionNumber = 0;
     }
 
-    public void startAutorepeat(int direction) {
-        if (!isOn) {
-            isOn = true;
-            this.direction.set(getDirectionVector(direction));
-            currentDirectionNumber = direction;
-        }
-    }
-
     public void stopAutorepeat(int direction) {
         if (this.direction.equals(getDirectionVector(direction))) {
             isOn = false;
@@ -46,6 +38,10 @@ public class Autorepeat {
             counter = 0;
             startDelayCounter = 0;
         }
+    }
+
+    public boolean isOn() {
+        return isOn;
     }
 
     private Vector2 getDirectionVector(int dirNumber) {
@@ -67,27 +63,6 @@ public class Autorepeat {
         return direction;
     }
 
-    public void loop(float deltaT, Playfield field) {
-        if (isOn) {
-            if (!started) {
-                startDelayCounter += deltaT;
-                if (startDelayCounter > START_DELAY) {
-                    counter = 0;
-                    started = true;
-                    return;
-                }
-            }
-
-            counter += deltaT;
-            if (counter > STEP) {
-                translater.movePiece(field, Math.round(direction.x), Math.round(direction.y));
-                counter = 0;
-            }
-        }
-    }
-
-    // WILL REPLACE loop(float deltaT, Playfield field)
-    // CALLED ON KEYHELD!
     public void stepAutorepeat(int direction, Playfield field) {
         float deltaT = Gdx.graphics.getDeltaTime();
         if (!isOn) {
