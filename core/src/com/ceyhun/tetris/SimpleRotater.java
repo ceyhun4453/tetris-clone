@@ -8,9 +8,6 @@ import java.util.Arrays;
 
 public class SimpleRotater implements Rotater {
 
-    public static final int CLOCKWISE = 1;
-    public static final int ANTICLOCKWISE = -1;
-
     private final WallKickData wallKickData;
     private final Matrix3 translation;
     private final Matrix3 invTranslation;

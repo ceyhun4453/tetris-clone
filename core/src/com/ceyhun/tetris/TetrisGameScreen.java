@@ -21,7 +21,6 @@ public class TetrisGameScreen implements Screen {
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(tetrisManager);
     }
 
     @Override

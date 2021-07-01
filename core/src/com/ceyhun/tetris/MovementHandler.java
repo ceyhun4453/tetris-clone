@@ -25,10 +25,6 @@ public class MovementHandler implements Translater, Rotater {
         return r;
     }
 
-    public void startAutorepeat() {
-
-    }
-
     @Override
     public MovementResult rotatePiece(Playfield field, int direction) {
         Vector2 currentPosition = new Vector2(field.getActivePieceCol(), field.getActivePieceRow());

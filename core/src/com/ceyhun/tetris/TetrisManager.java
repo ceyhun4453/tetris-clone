@@ -2,10 +2,9 @@ package com.ceyhun.tetris;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class TetrisManager implements InputProcessor {
+public class TetrisManager {
 
     private static final int clearsPerLevel = 10;
 
@@ -16,6 +15,8 @@ public class TetrisManager implements InputProcessor {
     private final Scorer scorer;
     private final TetriminoSource source;
     private final TetrisRenderer renderer;
+    private final Autorepeat autorepeat;
+    private final TetrisInputHandler inputHandler;
     private int currentLevel = 1;
     private int clearedRows = 0;
 
@@ -27,13 +28,38 @@ public class TetrisManager implements InputProcessor {
         renderer = new TetrisRenderer(field, batch, assets);
         source = new TetriminoSource(new TetriminoGenerator(), new TetriminoHolder());
         gravity = new Gravity();
+        autorepeat = new Autorepeat(movementHandler);
+        inputHandler = new TetrisInputHandler();
+        registerCommands();
+        Gdx.input.setInputProcessor(inputHandler);
         source.attemptToAdd(field, null);
     }
 
+    private void registerCommands() {
+        inputHandler.registerCommand(Input.Keys.LEFT, TetrisInputHandler.KEY_DOWN,
+                () -> movementHandler.movePiece(field, -1, 0));
+        inputHandler.registerCommand(Input.Keys.RIGHT, TetrisInputHandler.KEY_DOWN,
+                () -> movementHandler.movePiece(field, 1, 0));
+        inputHandler.registerCommand(Input.Keys.X, TetrisInputHandler.KEY_DOWN,
+                () -> movementHandler.rotatePiece(field, Rotater.CLOCKWISE));
+        inputHandler.registerCommand(Input.Keys.Z, TetrisInputHandler.KEY_DOWN,
+                () -> movementHandler.rotatePiece(field, Rotater.ANTICLOCKWISE));
+        inputHandler.registerCommand(Input.Keys.DOWN, TetrisInputHandler.KEY_DOWN, gravity::startSoftDrop);
+        inputHandler.registerCommand(Input.Keys.SPACE, TetrisInputHandler.KEY_DOWN, gravity::hardDrop);
+        inputHandler.registerCommand(Input.Keys.C, TetrisInputHandler.KEY_DOWN, () -> source.holdPiece(field));
+        inputHandler.registerCommand(Input.Keys.DOWN, TetrisInputHandler.KEY_UP, gravity::endSoftDrop);
+        inputHandler.registerCommand(Input.Keys.LEFT, TetrisInputHandler.KEY_UP, () -> autorepeat.stopAutorepeat(Autorepeat.LEFT));
+        inputHandler.registerCommand(Input.Keys.RIGHT, TetrisInputHandler.KEY_UP, () -> autorepeat.stopAutorepeat(Autorepeat.RIGHT));
+        inputHandler.registerCommand(Input.Keys.RIGHT, TetrisInputHandler.KEY_HELD,
+                () -> autorepeat.stepAutorepeat(Autorepeat.RIGHT, field));
+        inputHandler.registerCommand(Input.Keys.LEFT, TetrisInputHandler.KEY_HELD,
+                () -> autorepeat.stepAutorepeat(Autorepeat.LEFT, field));
+    }
     public void loop(float deltaT) {
+        inputHandler.processHeldInputs();
         Gravity.GravityEvent gravityEvent = gravity.gravitate(field, movementHandler, deltaT);
         scorer.updateScoreWithGravity(gravityEvent);
-        if(!gravityEvent.isPieceInPlay()) {
+        if (!gravityEvent.isPieceInPlay()) {
             Clearer.Clear lastClear = clearer.clearFullRows(field, movementHandler.getLastSuccesfulMovement());
             int lastClearedRows = lastClear.getNumberOfLines();
             Gdx.app.log("CLEAR TYPE", lastClear.getClearType().toString());
@@ -50,79 +76,5 @@ public class TetrisManager implements InputProcessor {
             System.out.println("Game over!");
         }
         renderer.render();
-    }
-
-    @Override
-    public boolean keyDown(int keycode) {
-        switch (keycode) {
-            case Input.Keys.LEFT:
-                movementHandler.movePiece(field, -1, 0);
-                return true;
-            case Input.Keys.RIGHT:
-                movementHandler.movePiece(field, 1, 0);
-                return true;
-            case Input.Keys.X:
-                movementHandler.rotatePiece(field, SimpleRotater.CLOCKWISE);
-                return true;
-            case Input.Keys.Z:
-                movementHandler.rotatePiece(field, SimpleRotater.ANTICLOCKWISE);
-                return true;
-            case Input.Keys.DOWN:
-                gravity.startSoftDrop();
-                return true;
-            case Input.Keys.SPACE:
-                gravity.hardDrop();
-                return true;
-            case Input.Keys.C:
-                source.holdPiece(field);
-            default: return false;
-        }
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        if (keycode == Input.Keys.DOWN) {
-            gravity.endSoftDrop();
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(float amountX, float amountY) {
-        return false;
-    }
-
-    public static class MoveLeft implements Command {
-
-        @Override
-        public void execute() {
-        }
     }
 }
