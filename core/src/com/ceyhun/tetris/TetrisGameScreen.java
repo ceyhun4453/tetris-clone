@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class TetrisGameScreen implements Screen {
-    private static final int unitLength = 10;
 
     private final TetrisManager tetrisManager;
     private final Assets assets;

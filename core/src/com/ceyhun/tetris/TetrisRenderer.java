@@ -1,11 +1,11 @@
 package com.ceyhun.tetris;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class TetrisRenderer {
-    private static final int unitLength = 10;
     private static final int visibleColumns = 10;
     private static final int visibleRows = 20;
     private final OrthographicCamera camera;
@@ -17,18 +17,21 @@ public class TetrisRenderer {
         this.playfield = playfield;
         this.batch = batch;
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, unitLength * visibleColumns, unitLength * visibleRows);
+        camera.setToOrtho(false, visibleColumns, visibleRows);
         batch.setProjectionMatrix(camera.combined);
         this.assets = assets;
     }
 
     public void render() {
+        int height = Gdx.graphics.getHeight();
+        int width = height / 2;
+        Gdx.gl.glViewport((Gdx.graphics.getWidth() - width) / 2, 0, width, height);
         renderBackground();
         renderPlayfield();
     }
 
     public void renderBackground() {
-        batch.draw(assets.getSprites().background, 0, 0);
+        batch.draw(assets.getSprites().background, 0, 0, visibleColumns, visibleRows);
     }
 
     public void renderPlayfield() {
@@ -38,7 +41,7 @@ public class TetrisRenderer {
                 if (value != 0) {
                     TextureRegion region = getTextureForPieceValue(value);
                     if (region != null) {
-                        batch.draw(region, col * unitLength, row * unitLength, unitLength, unitLength);
+                        batch.draw(region, col, row, 1, 1);
                     }
                 }
             }
