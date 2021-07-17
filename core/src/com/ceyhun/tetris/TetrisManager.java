@@ -77,9 +77,8 @@ public class TetrisManager {
         if (!gravityEvent.isPieceInPlay()) {
             Clearer.Clear lastClear = clearer.clearFullRows(field, movementHandler.getLastSuccesfulMovement());
             int lastClearedRows = lastClear.getNumberOfLines();
-            Gdx.app.log("CLEAR TYPE", lastClear.getClearType().toString());
             clearedRows += lastClearedRows;
-            scorer.updateScoreWithClear(lastClearedRows, currentLevel);
+            scorer.updateScoreWithClear(lastClear, currentLevel);
             if (clearedRows >= clearsPerLevel) {
                 currentLevel++;
                 hud.updateLevel(currentLevel);
