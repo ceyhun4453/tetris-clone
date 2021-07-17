@@ -7,7 +7,8 @@ import com.ceyhun.tetris.MyGdxGame;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-		config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
+		config.setWindowedMode(1280, 720);
+		config.setResizable(true);
 		config.setTitle("Tetris");
 		new Lwjgl3Application(new MyGdxGame(), config);
 	}

@@ -2,9 +2,12 @@ package com.ceyhun.tetris;
 import com.badlogic.gdx.Game;
 public class MyGdxGame extends Game {
 
+	private TetrisGameScreen screen;
+
 	@Override
 	public void create () {
-		setScreen(new TetrisGameScreen());
+		screen = new TetrisGameScreen();
+		setScreen(screen);
 	}
 
 	@Override
@@ -14,5 +17,6 @@ public class MyGdxGame extends Game {
 	
 	@Override
 	public void dispose () {
+		screen.dispose();
 	}
 }

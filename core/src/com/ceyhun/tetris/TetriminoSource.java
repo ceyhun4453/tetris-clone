@@ -30,17 +30,18 @@ public class TetriminoSource {
         return true;
     }
 
-    public void holdPiece(Playfield field) {
+    public boolean holdPiece(Playfield field) {
         TetriminoHolder.HoldResult result = holder.holdPiece(field.getActivePiece());
         if (result.getPiece() == null && result.isSaved()) {
             field.unmergeActivePiece();
             addNewPiece(field, generator.getRandomTetrimino());
+            return true;
         } else if (result.getPiece() != null && result.isSaved()) {
             field.unmergeActivePiece();
             addNewPiece(field, result.getPiece());
+            return true;
         }
-
-
+        return false;
     }
 
     private boolean addNewPiece(Playfield field, Tetrimino newPiece) {

@@ -3,6 +3,7 @@ package com.ceyhun.tetris;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class TetrisManager {
 
@@ -15,17 +16,18 @@ public class TetrisManager {
     private final Scorer scorer;
     private final TetriminoSource source;
     private final TetrisRenderer renderer;
+    private final Hud hud;
     private final Autorepeat autorepeat;
     private final TetrisInputHandler inputHandler;
     private int currentLevel = 1;
     private int clearedRows = 0;
 
-    public TetrisManager(SpriteBatch batch, Assets assets) {
+    public TetrisManager(SpriteBatch batch, ShapeRenderer shapeRenderer, Assets assets) {
         field = new Playfield();
         movementHandler = new MovementHandler();
         clearer = new Clearer();
         scorer = new Scorer();
-        renderer = new TetrisRenderer(field, batch, assets);
+        renderer = new TetrisRenderer(field, batch, shapeRenderer, assets);
         source = new TetriminoSource(new TetriminoGenerator(), new TetriminoHolder());
         gravity = new Gravity();
         autorepeat = new Autorepeat(movementHandler);
@@ -33,6 +35,7 @@ public class TetrisManager {
         registerCommands();
         Gdx.input.setInputProcessor(inputHandler);
         source.attemptToAdd(field, null);
+        hud = new Hud(batch, shapeRenderer,assets);
     }
 
     private void registerCommands() {
@@ -52,7 +55,12 @@ public class TetrisManager {
                 () -> movementHandler.rotatePiece(field, Rotater.ANTICLOCKWISE));
         inputHandler.registerCommand(Input.Keys.DOWN, TetrisInputHandler.KEY_DOWN, gravity::startSoftDrop);
         inputHandler.registerCommand(Input.Keys.SPACE, TetrisInputHandler.KEY_DOWN, gravity::hardDrop);
-        inputHandler.registerCommand(Input.Keys.C, TetrisInputHandler.KEY_DOWN, () -> source.holdPiece(field));
+        inputHandler.registerCommand(Input.Keys.C, TetrisInputHandler.KEY_DOWN, () -> {
+            Tetrimino piece = field.getActivePiece();
+            if (source.holdPiece(field)) {
+                hud.updateSavedPiece(piece);
+            }
+        });
         inputHandler.registerCommand(Input.Keys.DOWN, TetrisInputHandler.KEY_UP, gravity::endSoftDrop);
         inputHandler.registerCommand(Input.Keys.LEFT, TetrisInputHandler.KEY_UP, () -> autorepeat.stopAutorepeat(Autorepeat.LEFT));
         inputHandler.registerCommand(Input.Keys.RIGHT, TetrisInputHandler.KEY_UP, () -> autorepeat.stopAutorepeat(Autorepeat.RIGHT));
@@ -61,6 +69,7 @@ public class TetrisManager {
         inputHandler.registerCommand(Input.Keys.LEFT, TetrisInputHandler.KEY_HELD,
                 () -> autorepeat.stepAutorepeat(Autorepeat.LEFT, field));
     }
+
     public void loop(float deltaT) {
         inputHandler.processHeldInputs();
         Gravity.GravityEvent gravityEvent = gravity.gravitate(field, movementHandler, deltaT);
@@ -73,6 +82,7 @@ public class TetrisManager {
             scorer.updateScoreWithClear(lastClearedRows, currentLevel);
             if (clearedRows >= clearsPerLevel) {
                 currentLevel++;
+                hud.updateLevel(currentLevel;
                 gravity.stepUpFallSpeed();
                 clearedRows -= clearsPerLevel;
             }
@@ -81,6 +91,8 @@ public class TetrisManager {
             //GAMEOVER
             System.out.println("Game over!");
         }
+        hud.updateScore(scorer.getScore());
+        hud.render();
         renderer.render();
     }
 }
