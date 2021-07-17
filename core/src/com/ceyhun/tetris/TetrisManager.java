@@ -6,9 +6,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class TetrisManager {
-
-    private static final int clearsPerLevel = 10;
-
     private final Playfield field;
     private final MovementHandler movementHandler;
     private final Clearer clearer;
@@ -19,8 +16,9 @@ public class TetrisManager {
     private final Hud hud;
     private final Autorepeat autorepeat;
     private final TetrisInputHandler inputHandler;
-    private int currentLevel = 1;
-    private int clearedRows = 0;
+    private final LevelTracker levelTracker;
+
+    private boolean isOver = false;
 
     public TetrisManager(SpriteBatch batch, ShapeRenderer shapeRenderer, Assets assets) {
         field = new Playfield();
@@ -32,13 +30,19 @@ public class TetrisManager {
         gravity = new Gravity();
         autorepeat = new Autorepeat(movementHandler);
         inputHandler = new TetrisInputHandler();
-        registerCommands();
+        registerInputCommands();
         Gdx.input.setInputProcessor(inputHandler);
         source.attemptToAdd(field, null);
+        levelTracker = new LevelTracker(1);
         hud = new Hud(batch, shapeRenderer,assets);
+        hud.updateLevel(levelTracker.getCurrentLevel());
+        levelTracker.setOnLevelUp(() -> {
+            hud.updateLevel(levelTracker.getCurrentLevel());
+            gravity.stepUpFallSpeed();
+        });
     }
 
-    private void registerCommands() {
+    private void registerInputCommands() {
         inputHandler.registerCommand(Input.Keys.LEFT, TetrisInputHandler.KEY_DOWN, () -> {
             if (!autorepeat.isOn()) {
                 movementHandler.movePiece(field, -1, 0);
@@ -71,27 +75,24 @@ public class TetrisManager {
     }
 
     public void loop(float deltaT) {
-        inputHandler.processHeldInputs();
-        Gravity.GravityEvent gravityEvent = gravity.gravitate(field, movementHandler, deltaT);
-        scorer.updateScoreWithGravity(gravityEvent);
-        if (!gravityEvent.isPieceInPlay()) {
-            Clearer.Clear lastClear = clearer.clearFullRows(field, movementHandler.getLastSuccesfulMovement());
-            int lastClearedRows = lastClear.getNumberOfLines();
-            clearedRows += lastClearedRows;
-            scorer.updateScoreWithClear(lastClear, currentLevel);
-            if (clearedRows >= clearsPerLevel) {
-                currentLevel++;
-                hud.updateLevel(currentLevel);
-                gravity.stepUpFallSpeed();
-                clearedRows -= clearsPerLevel;
+        if (!isOver) {
+            inputHandler.processHeldInputs();
+            Gravity.GravityEvent gravityEvent = gravity.gravitate(field, movementHandler, deltaT);
+            scorer.updateScoreWithGravity(gravityEvent);
+            if (!gravityEvent.isPieceInPlay()) {
+                Clearer.Clear lastClear = clearer.clearFullRows(field, movementHandler.getLastSuccesfulMovement());
+                scorer.updateScoreWithClear(lastClear, levelTracker.getCurrentLevel());
+                levelTracker.updateLevel(lastClear);
             }
+            if (!source.attemptToAdd(field, gravityEvent)) {
+                // TODO: Update high scores? Ask player for their name?
+                isOver = true;
+                System.out.println("Game Over");
+            }
+
+            hud.updateScore(scorer.getScore());
+            hud.render();
+            renderer.render();
         }
-        if (!source.attemptToAdd(field, gravityEvent)) {
-            //GAMEOVER
-            System.out.println("Game over!");
-        }
-        hud.updateScore(scorer.getScore());
-        hud.render();
-        renderer.render();
     }
 }
