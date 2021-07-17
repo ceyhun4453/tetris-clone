@@ -82,7 +82,7 @@ public class TetrisManager {
             scorer.updateScoreWithClear(lastClearedRows, currentLevel);
             if (clearedRows >= clearsPerLevel) {
                 currentLevel++;
-                hud.updateLevel(currentLevel;
+                hud.updateLevel(currentLevel);
                 gravity.stepUpFallSpeed();
                 clearedRows -= clearsPerLevel;
             }

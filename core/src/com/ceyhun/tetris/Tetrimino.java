@@ -114,5 +114,9 @@ public class Tetrimino {
             }
             return null;
         }
+
+        public int getConstant() {
+            return constant;
+        }
     }
 }
